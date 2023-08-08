@@ -6,12 +6,12 @@ import Dialog from "./components/Dialog.vue"
 import { useApi } from "./composables/useApi"
 
 const isOpen = ref(true)
-const { getSpiritList } = useApi()
+const { getSpirit } = useApi()
 
 onMounted(async () => {
-	const list = await getSpiritList()
+	const data = await getSpirit({ hash: "79bdd5fd" })
 
-	console.log(list)
+	console.log(data)
 })
 </script>
 
@@ -25,6 +25,9 @@ onMounted(async () => {
 <style scoped lang="postcss">
 #app-main {
 	@apply w-[500px] h-[600px]
-	border border-slate-500;
+	border border-slate-500
+	bg-slate-50 dark:bg-slate-800
+	text-slate-700 dark:text-slate-100
+	transition-all duration-200 ease-in-out;
 }
 </style>

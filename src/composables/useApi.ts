@@ -21,6 +21,7 @@ const headers = {
 	// "user-agent":
 	// 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188",
 }
+const staticURL = "https://res.17roco.qq.com/res/combat/icons/"
 const rocoApi = axios.create({
 	baseURL,
 	headers,
@@ -34,7 +35,20 @@ interface SpiritListParma {
 	page: number
 }
 
+interface ItemListParma {
+	search: string
+	id: string
+	page: number
+}
+
 export const useApi = () => {
+	// Angel Feature Map
+	async function getFeatures() {
+		const response = await rocoApi.get("/feature/")
+		return response.data
+	}
+
+	// Angel List
 	async function getSpiritList(
 		params: SpiritListParma = {
 			search: "",
@@ -46,7 +60,47 @@ export const useApi = () => {
 		const response = await rocoApi.post("/spiritList/", params)
 		return response.data.data
 	}
+
+	// Angel Detail
+	async function getSpirit(params: { hash: string }) {
+		const response = await rocoApi.post("/detail/angel/", params)
+		return response.data.data
+	}
+
+	// Item List
+	async function getItemList(
+		params: ItemListParma = {
+			search: "",
+			id: "",
+			page: 1,
+		}
+	) {
+		const response = await rocoApi.post("/Itemlist/", params)
+		return response.data.data
+	}
+
+	// Angel Skill List
+	async function getSkillList(
+		params: SpiritListParma = {
+			search: "",
+			id: "",
+			feature: "",
+			page: 1,
+		}
+	) {
+		const response = await rocoApi.post("/Skilllist/", params)
+		return response.data.data
+	}
+
 	return {
+		getFeatures,
 		getSpiritList,
+		getSpirit,
+		getItemList,
+		getSkillList,
+		baseURL,
+		headers,
+		timeout,
+		staticURL,
 	}
 }
