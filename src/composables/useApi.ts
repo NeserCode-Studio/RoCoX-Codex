@@ -1,4 +1,5 @@
 import axios from "axios"
+import NProgress from "nprogress"
 
 const baseURL = "https://api.rocotime.com/api"
 const timeout = 3000
@@ -21,12 +22,18 @@ const headers = {
 	// "user-agent":
 	// 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188",
 }
-const staticURL = "https://res.17roco.qq.com/res/combat/icons/"
+const iconStaticURL = "https://res.17roco.qq.com/res/combat/icons/"
+const featureStaticURL = "https://res.17roco.qq.com/res/combat/property/"
 const rocoApi = axios.create({
 	baseURL,
 	headers,
 	timeout,
 })
+
+interface FeatureObject {
+	id: string
+	name: string
+}
 
 interface SpiritListParma {
 	search: string
@@ -41,11 +48,42 @@ interface ItemListParma {
 	page: number
 }
 
+// request Interceptions
+rocoApi.interceptors.request.use(
+	(config) => {
+		NProgress.start()
+		return config
+	},
+	(error) => {
+		NProgress.done()
+		return Promise.reject(error)
+	}
+)
+
+// response Interceptions
+rocoApi.interceptors.response.use(
+	(config) => {
+		NProgress.done()
+		return config
+	},
+	(error) => {
+		NProgress.done()
+		return Promise.reject(error)
+	}
+)
+
 export const useApi = () => {
 	// Angel Feature Map
-	async function getFeatures() {
-		const response = await rocoApi.get("/feature/")
-		return response.data
+	function getFeatures() {
+		return rocoApi.get("/feature/").then((response) => {
+			const obj: FeatureObject[] = response.data.list
+			const map = new Map()
+
+			obj.forEach((pair) => {
+				map.set(pair.id, pair.name)
+			})
+			return map
+		})
 	}
 
 	// Angel List
@@ -101,6 +139,7 @@ export const useApi = () => {
 		baseURL,
 		headers,
 		timeout,
-		staticURL,
+		iconStaticURL,
+		featureStaticURL,
 	}
 }

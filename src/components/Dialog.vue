@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import {} from "vue"
 import {
 	TransitionRoot,
 	TransitionChild,
@@ -36,7 +35,7 @@ function closeModal() {
 				/>
 			</TransitionChild>
 
-			<div class="fixed inset-0 overflow-y-auto">
+			<div class="fixed inset-x-0 overflow-y-auto translate-y-4 inset-y-4">
 				<div
 					class="flex items-center justify-center min-h-full p-4 text-center"
 				>

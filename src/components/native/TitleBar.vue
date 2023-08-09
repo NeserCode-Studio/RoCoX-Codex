@@ -74,8 +74,8 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
 <style scoped lang="postcss">
 #app-title-bar {
 	@apply relative inline-flex items-center justify-end w-full h-8
-	border-b border-slate-500
-	bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-200
+	border-b border-slate-300 dark:border-slate-600
+	bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-200
 	transition-all
   select-none;
 }
