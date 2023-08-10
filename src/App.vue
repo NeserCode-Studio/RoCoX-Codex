@@ -1,20 +1,10 @@
 <script setup lang="ts">
-import { ref, provide } from "vue"
+import { ref } from "vue"
 import TitleBar from "./components/native/TitleBar.vue"
 import Dialog from "./components/Dialog.vue"
 import TopLinks from "./components/TopLinks.vue"
 
-import { UpdateFeatureFunctionalKey } from "./tokens"
-
 const isOpenModelDialog = ref(false)
-const selectedFeature = ref("")
-
-const featureUpdateFn = (featureIndex: string) => {
-	selectedFeature.value = featureIndex
-	console.log("Top: feature change to", featureIndex)
-}
-
-provide(UpdateFeatureFunctionalKey, { featureUpdateFn })
 </script>
 
 <template>
@@ -31,12 +21,18 @@ provide(UpdateFeatureFunctionalKey, { featureUpdateFn })
 	</div>
 </template>
 
-<style scoped lang="postcss">
+<style>
+html.dark {
+	color-scheme: dark;
+}
+
 @font-face {
 	src: url("./assets/SourceHanSerifCN-VF.ttf");
 	font-family: "SourceHanSerifCN";
 }
+</style>
 
+<style scoped lang="postcss">
 #app-main {
 	@apply relative w-[500px] min-h-[600px]
 	border border-slate-400

@@ -35,7 +35,7 @@ interface FeatureObject {
 	name: string
 }
 
-interface SpiritListParma {
+interface AngelListParma {
 	search: string
 	id: string
 	feature: string
@@ -48,7 +48,7 @@ interface ItemListParma {
 	page: number
 }
 
-// request Interceptions
+// Request Interceptions
 rocoApi.interceptors.request.use(
 	(config) => {
 		NProgress.start()
@@ -60,7 +60,7 @@ rocoApi.interceptors.request.use(
 	}
 )
 
-// response Interceptions
+// Response Interceptions
 rocoApi.interceptors.response.use(
 	(config) => {
 		NProgress.done()
@@ -72,36 +72,38 @@ rocoApi.interceptors.response.use(
 	}
 )
 
+// Request AbortController Signal
+type Signal = AbortSignal
+
 export const useApi = () => {
 	// Angel Feature Map
-	function getFeatures() {
-		return rocoApi.get("/feature/").then((response) => {
-			const obj: FeatureObject[] = response.data.list
-			const map = new Map()
-
-			obj.forEach((pair) => {
-				map.set(pair.id, pair.name)
-			})
-			return map
+	async function getFeatures(signal?: Signal) {
+		const response = await rocoApi.get("/feature/", { signal })
+		const obj: FeatureObject[] = response.data.list
+		const map = new Map()
+		obj.forEach((pair) => {
+			map.set(pair.id, pair.name)
 		})
+		return map
 	}
 
 	// Angel List
-	async function getSpiritList(
-		params: SpiritListParma = {
+	async function getAngelList(
+		params: AngelListParma = {
 			search: "",
 			id: "",
 			feature: "",
 			page: 1,
-		}
+		},
+		signal?: Signal
 	) {
-		const response = await rocoApi.post("/spiritList/", params)
+		const response = await rocoApi.post("/spiritList/", params, { signal })
 		return response.data.data
 	}
 
 	// Angel Detail
-	async function getSpirit(params: { hash: string }) {
-		const response = await rocoApi.post("/detail/angel/", params)
+	async function getAngel(params: { hash: string }, signal?: Signal) {
+		const response = await rocoApi.post("/detail/angel/", params, { signal })
 		return response.data.data
 	}
 
@@ -111,29 +113,31 @@ export const useApi = () => {
 			search: "",
 			id: "",
 			page: 1,
-		}
+		},
+		signal?: Signal
 	) {
-		const response = await rocoApi.post("/Itemlist/", params)
+		const response = await rocoApi.post("/Itemlist/", params, { signal })
 		return response.data.data
 	}
 
 	// Angel Skill List
 	async function getSkillList(
-		params: SpiritListParma = {
+		params: AngelListParma = {
 			search: "",
 			id: "",
 			feature: "",
 			page: 1,
-		}
+		},
+		signal?: Signal
 	) {
-		const response = await rocoApi.post("/Skilllist/", params)
+		const response = await rocoApi.post("/Skilllist/", params, { signal })
 		return response.data.data
 	}
 
 	return {
 		getFeatures,
-		getSpiritList,
-		getSpirit,
+		getAngelList,
+		getAngel,
 		getItemList,
 		getSkillList,
 		baseURL,

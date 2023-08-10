@@ -6,11 +6,7 @@ import {
 	PopoverButton,
 	PopoverPanel,
 } from "@headlessui/vue"
-import {
-	NoSymbolIcon,
-	ChevronDownIcon,
-	FunnelIcon,
-} from "@heroicons/vue/20/solid"
+import { NoSymbolIcon, ChevronDownIcon } from "@heroicons/vue/20/solid"
 import { nextTick, onMounted, ref, watch, inject } from "vue"
 import type { Ref } from "vue"
 import { useApi } from "../composables/useApi"
@@ -46,6 +42,7 @@ function delayAccept(fn: () => void) {
 const { featureUpdateFn } = inject<{
 	featureUpdateFn: (index: string) => void
 }>(UpdateFeatureFunctionalKey, { featureUpdateFn: () => {} })
+
 watch(checkedOption, (value) => {
 	console.log("Component: Feature Change to", value)
 	getMatchText(value)
@@ -54,12 +51,11 @@ watch(checkedOption, (value) => {
 </script>
 
 <template>
-	<Popover as="div" class="self-end" v-slot="{ open, close }">
-		<PopoverButton class="shadow-lg">
+	<Popover as="div" v-slot="{ open, close }">
+		<PopoverButton class="transition-all shadow-lg outline-none">
 			<div class="btn-context">
-				<FunnelIcon class="icon" />
 				<img
-					v-show="checkedOption !== ''"
+					v-if="checkedOption !== ''"
 					draggable="false"
 					class="icon"
 					:src="getFeatureIcon(checkedOption)"
@@ -77,9 +73,9 @@ watch(checkedOption, (value) => {
 			leave-from-class="translate-y-0 opacity-100"
 			leave-to-class="translate-y-1 opacity-0"
 		>
-			<PopoverPanel class="absolute z-10 max-w-sm transform right-7">
+			<PopoverPanel class="absolute z-10 max-w-sm transform right-8">
 				<RadioGroup
-					class="w-[340px] flex flex-row flex-wrap items-center transition-all border-2 select-none justify-end rounded-md translate-x-0.5 translate-y-3 bg-white dark:bg-stone-800 border-slate-200 dark:border-slate-500"
+					class="w-[340px] flex flex-row flex-wrap items-center transition-all border-2 select-none justify-end rounded-md translate-x-0.5 translate-y-3 bg-neutral-200 dark:bg-neutral-500 border-slate-200 dark:border-slate-500"
 					v-model="checkedOption"
 				>
 					<RadioGroupOption
