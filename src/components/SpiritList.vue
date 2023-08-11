@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { toRefs, watch } from "vue"
 import { useApi } from "../composables/useApi"
-import { computedAsync } from "@vueuse/core"
+import { computedAsync, useStorage } from "@vueuse/core"
 
 import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 
@@ -37,9 +37,21 @@ const listData = computedAsync(async (onCancel) => {
 		abortController.signal
 	)
 })
+const pageSize = useStorage("roco-api-list-size", 21)
+const totalFromID = useStorage("roco-api-max-id", 0)
 
-watch(listData, (val) => {
-	console.log(val)
+const $emits = defineEmits(["update:sizes"])
+
+watch(listData, (val: any[]) => {
+	if (search.value === "" && feature.value === "" && page.value === 1) {
+		pageSize.value = val.length
+		totalFromID.value = parseInt(val[0].id)
+	}
+	$emits("update:sizes", {
+		listSize: val.length,
+		pageSize: pageSize.value,
+		total: totalFromID.value,
+	})
 })
 
 function getFeatureIconSrc(featureIndex: string) {
@@ -51,7 +63,7 @@ function getAngelIconSrc(iconSrc: string) {
 </script>
 
 <template>
-	<div class="angel-list-main">
+	<div class="angel-list-main" ref="main">
 		<div class="angel-card" v-for="angel in listData" :key="angel.hash">
 			<span class="details">
 				<span class="name-text">#{{ angel.id }} · {{ angel.name }}</span>
@@ -87,7 +99,7 @@ function getAngelIconSrc(iconSrc: string) {
 
 <style lang="postcss" scoped>
 .angel-list-main::-webkit-scrollbar {
-	@apply w-3;
+	@apply w-2;
 }
 .angel-list-main::-webkit-scrollbar-track {
 	@apply bg-slate-200 dark:bg-slate-600;

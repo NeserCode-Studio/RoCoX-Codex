@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, provide } from "vue"
+import { ref, computed, provide } from "vue"
 import SearchFilter from "../components/SearchFilter.vue"
 import FeatureFilter from "../components/FeatureFilter.vue"
 import SpiritList from "../components/SpiritList.vue"
@@ -12,6 +12,19 @@ import {
 
 const selectedFeature = ref("")
 const inputSearch = ref("")
+const paganationProps = ref({
+	listSize: 0,
+	pageSize: 0,
+	total: 0,
+})
+const paganationPage = ref(1)
+const hasPrev = computed(() => !(paganationPage.value === 1))
+const hasNext = computed(
+	() => paganationProps.value.listSize === paganationProps.value.pageSize
+)
+const canJump = computed(
+	() => selectedFeature.value === "" && inputSearch.value === ""
+)
 
 const featureUpdateFn = (featureIndex: string) => {
 	if (selectedFeature.value === featureIndex) return false
@@ -26,6 +39,24 @@ const searchUpdateFn = (searchString: string) => {
 
 provide(UpdateFeatureFunctionalKey, { featureUpdateFn })
 provide(UpdateSearchFunctionalKey, { searchUpdateFn })
+
+function updatePaganationSize(data: {
+	listSize: number
+	pageSize: number
+	total: number
+}) {
+	paganationProps.value.listSize = data.listSize
+	paganationProps.value.pageSize = data.pageSize
+	paganationProps.value.total = data.total
+}
+function pageUpdateFn(page: number) {
+	let totalPage = Math.round(
+		paganationProps.value.total / paganationProps.value.pageSize
+	)
+	if (page <= totalPage && page > 0) paganationPage.value = page
+
+	console.log(page)
+}
 </script>
 
 <template>
@@ -34,7 +65,12 @@ provide(UpdateSearchFunctionalKey, { searchUpdateFn })
 			<SearchFilter />
 			<FeatureFilter />
 		</div>
-		<SpiritList :search="inputSearch" :feature="selectedFeature" />
+		<SpiritList
+			:search="inputSearch"
+			:feature="selectedFeature"
+			:page="paganationPage"
+			@update:sizes="updatePaganationSize"
+		/>
 		<div class="footer-image">
 			<img
 				class="dimo"
@@ -43,7 +79,15 @@ provide(UpdateSearchFunctionalKey, { searchUpdateFn })
 				alt="Roco Dimo"
 			/>
 		</div>
-		<Paganation />
+		<Paganation
+			:can-jump="canJump"
+			:has-prev="hasPrev"
+			:has-next="hasNext"
+			:total="paganationProps.total"
+			:page-size="paganationProps.pageSize"
+			:page="paganationPage"
+			:page-update-fn="pageUpdateFn"
+		/>
 	</div>
 </template>
 

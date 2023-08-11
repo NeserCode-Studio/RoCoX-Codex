@@ -4,12 +4,24 @@ import {
 	XMarkIcon,
 	SunIcon,
 	MoonIcon,
+	PaperClipIcon,
 } from "@heroicons/vue/20/solid"
 import { ref } from "vue"
+import { useStorage } from "@vueuse/core"
 import { appWindow } from "@tauri-apps/api/window"
 import { useDarkMode } from "../../composables/useDarkMode"
 
 const title = ref("Roco Codex")
+const isAlwaysonTop = useStorage("roco-always-on-top", false)
+
+function getIspinnedClass() {
+	return isAlwaysonTop.value ? "pinned" : null
+}
+
+async function toggleIspinned() {
+	isAlwaysonTop.value = !isAlwaysonTop.value
+	await appWindow.setAlwaysOnTop(isAlwaysonTop.value)
+}
 
 function minimize() {
 	let element = document.querySelector(".minimize.btn") as HTMLElement
@@ -42,6 +54,14 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
 			<span data-tauri-drag-region>{{ title }}</span>
 		</span>
 		<div class="buttons" data-tauri-drag-region>
+			<span
+				:class="['btn', 'pin', getIspinnedClass()]"
+				@mouseenter="addMoveClass"
+				@mouseleave="removeMoveClass"
+				@click="toggleIspinned"
+			>
+				<PaperClipIcon class="icon" />
+			</span>
 			<span
 				class="btn darkmode"
 				@mouseenter="addMoveClass"
@@ -104,5 +124,20 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
 
 .darkmode {
 	@apply w-10 py-1.5 px-3;
+}
+
+.pin {
+	@apply w-10 p-0;
+}
+.pin .icon {
+	@apply w-5 p-1 transition-all
+	rounded scale-125;
+}
+.moving .icon {
+	@apply rotate-[135deg];
+}
+
+.pin.pinned .icon {
+	@apply bg-slate-600 text-slate-100 rotate-[135deg] scale-100;
 }
 </style>

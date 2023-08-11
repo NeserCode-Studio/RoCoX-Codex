@@ -42,4 +42,7 @@ function submitChangetoTop() {
   focus:ring-2 focus:border-green-300 dark:focus:border-green-500 ring-green-300 dark:ring-green-500
   outline-none shadow-lg transition-all rounded;
 }
+.filter-body::placeholder {
+	@apply select-none transition-all;
+}
 </style>
