@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/20/solid"
+import { useThrottleFn } from "@vueuse/core"
 import { ref, toRefs } from "vue"
 
 const $props = withDefaults(
@@ -43,13 +44,16 @@ function submitPageChange(change?: "plus" | "minus") {
 
 	pageUpdateFn(innerPage.value)
 }
+const throttleSubmitPageChange = useThrottleFn((change?: "plus" | "minus") => {
+	submitPageChange(change)
+}, 800)
 </script>
 
 <template>
 	<div class="paganation">
 		<span
 			:class="['prev', 'operation', getDisabledClass(!hasPrev)]"
-			@click="submitPageChange('minus')"
+			@click="throttleSubmitPageChange('minus')"
 		>
 			<ChevronLeftIcon class="icon" />
 		</span>
@@ -59,12 +63,12 @@ function submitPageChange(change?: "plus" | "minus") {
 			v-if="canJump && total && pageSize"
 			type="number"
 			:min="1"
-			@keyup.enter="submitPageChange()"
+			@keyup.enter="throttleSubmitPageChange()"
 		/>
 		<span v-else class="page">{{ page }}</span>
 		<span
 			:class="['next', 'operation', getDisabledClass(!hasNext)]"
-			@click="submitPageChange('plus')"
+			@click="throttleSubmitPageChange('plus')"
 		>
 			<ChevronRightIcon class="icon" />
 		</span>

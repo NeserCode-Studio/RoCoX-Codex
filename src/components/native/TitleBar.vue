@@ -6,8 +6,8 @@ import {
 	MoonIcon,
 	PaperClipIcon,
 } from "@heroicons/vue/20/solid"
-import { ref } from "vue"
-import { useStorage } from "@vueuse/core"
+import { ref, onMounted } from "vue"
+import { useStorage, useThrottleFn } from "@vueuse/core"
 import { appWindow } from "@tauri-apps/api/window"
 import { useDarkMode } from "../../composables/useDarkMode"
 
@@ -17,11 +17,18 @@ const isAlwaysonTop = useStorage("roco-always-on-top", false)
 function getIspinnedClass() {
 	return isAlwaysonTop.value ? "pinned" : null
 }
+// Initial top
+onMounted(async () => {
+	await appWindow.setAlwaysOnTop(isAlwaysonTop.value)
+})
 
 async function toggleIspinned() {
 	isAlwaysonTop.value = !isAlwaysonTop.value
 	await appWindow.setAlwaysOnTop(isAlwaysonTop.value)
 }
+const throttleToggleIspinned = useThrottleFn(() => {
+	toggleIspinned()
+}, 800)
 
 function minimize() {
 	let element = document.querySelector(".minimize.btn") as HTMLElement
@@ -58,7 +65,7 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
 				:class="['btn', 'pin', getIspinnedClass()]"
 				@mouseenter="addMoveClass"
 				@mouseleave="removeMoveClass"
-				@click="toggleIspinned"
+				@click="throttleToggleIspinned"
 			>
 				<PaperClipIcon class="icon" />
 			</span>

@@ -3,7 +3,7 @@ import { toRefs, watch } from "vue"
 import { useApi } from "../composables/useApi"
 import { computedAsync, useStorage } from "@vueuse/core"
 
-import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
+import { CubeTransparentIcon, BugAntIcon } from "@heroicons/vue/20/solid"
 
 const $props = withDefaults(
 	defineProps<{
@@ -37,6 +37,7 @@ const listData = computedAsync(async (onCancel) => {
 		abortController.signal
 	)
 })
+const isEmpty = computedAsync(() => listData.value.length === 0)
 const pageSize = useStorage("roco-api-list-size", 21)
 const totalFromID = useStorage("roco-api-max-id", 0)
 
@@ -63,7 +64,7 @@ function getAngelIconSrc(iconSrc: string) {
 </script>
 
 <template>
-	<div class="angel-list-main" ref="main">
+	<div class="angel-list-main">
 		<div class="angel-card" v-for="angel in listData" :key="angel.hash">
 			<span class="details">
 				<span class="name-text">#{{ angel.id }} · {{ angel.name }}</span>
@@ -94,9 +95,31 @@ function getAngelIconSrc(iconSrc: string) {
 				/>
 			</span>
 		</div>
+		<Transition name="slidein" mode="in-out" :appear="true">
+			<div class="empty-palceholder" v-if="isEmpty">
+				<span class="empty-icons">
+					<CubeTransparentIcon class="icon" /> ·
+					<BugAntIcon class="icon" />
+				</span>
+				<span class="empty-text"
+					>筛选结果为空，但不排除小概率因接口、网络等引起的故障。</span
+				>
+			</div>
+		</Transition>
 	</div>
 </template>
 
+<style lang="postcss" scoped>
+.slidein-enter-active,
+.slidein-leave-active {
+	@apply transition-all duration-500;
+}
+
+.slidein-enter-from,
+.slidein-leave-to {
+	@apply opacity-0 scale-50;
+}
+</style>
 <style lang="postcss" scoped>
 .angel-list-main::-webkit-scrollbar {
 	@apply w-2;
@@ -145,5 +168,21 @@ function getAngelIconSrc(iconSrc: string) {
 	@apply absolute right-0 w-11 h-11 inline-block p-2
   text-slate-600 dark:text-slate-300
   rounded-r transition-all;
+}
+
+.empty-palceholder {
+	@apply w-full h-full flex flex-col items-center justify-center
+	select-none;
+}
+.empty-text {
+	@apply inline-block
+	text-sm font-bold text-center;
+}
+.empty-icons {
+	@apply inline-flex justify-center items-center pb-4;
+}
+.empty-icons .icon {
+	@apply w-12 h-12 inline-block m-2
+	animate-pulse;
 }
 </style>

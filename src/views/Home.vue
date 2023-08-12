@@ -29,11 +29,13 @@ const canJump = computed(
 const featureUpdateFn = (featureIndex: string) => {
 	if (selectedFeature.value === featureIndex) return false
 	selectedFeature.value = featureIndex
+	paganationPage.value = 1
 	console.log("Home: Feature Change to", featureIndex)
 }
 const searchUpdateFn = (searchString: string) => {
 	if (inputSearch.value === searchString) return false
 	inputSearch.value = searchString
+	paganationPage.value = 1
 	console.log("Home: Search Change to", searchString)
 }
 
@@ -54,8 +56,6 @@ function pageUpdateFn(page: number) {
 		paganationProps.value.total / paganationProps.value.pageSize
 	)
 	if (page <= totalPage && page > 0) paganationPage.value = page
-
-	console.log(page)
 }
 </script>
 
@@ -98,7 +98,7 @@ function pageUpdateFn(page: number) {
 
 .footer-image {
 	@apply w-full h-px relative
-	-translate-x-4 transform select-none;
+	-translate-x-2 transform select-none;
 }
 .dimo {
 	@apply w-24 absolute top-0 left-0;
