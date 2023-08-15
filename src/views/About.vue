@@ -1,16 +1,24 @@
 <script lang="ts" setup>
-// import { ref } from "vue"
+import { onActivated } from "vue"
 import { useStorage } from "@vueuse/core"
 
 const isFullRound = useStorage("roco-avatar-rounded", false)
+const slideDirection = useStorage(
+	"roco-navigation-transition-direction",
+	"slideleft"
+)
 
 function toggleAvatarRounded() {
 	isFullRound.value = !isFullRound.value
 }
+
+onActivated(() => {
+	slideDirection.value = "slideleft"
+})
 </script>
 
 <template>
-	<div id="about">
+	<div>
 		<div class="avatar-container">
 			<img
 				src="https://avatars.githubusercontent.com/u/73767966?v=4"
@@ -24,6 +32,20 @@ function toggleAvatarRounded() {
 				>Code by
 				<a draggable="false" target="_blank" href="https://github.com/NeserCode"
 					>NeserCode</a
+				>
+				#
+				<a
+					draggable="false"
+					target="_blank"
+					href="https://github.com/NeserCode-Studio"
+					>NCS</a
+				>
+				·
+				<a
+					draggable="false"
+					target="_blank"
+					href="https://afdian.net/a/nesercode"
+					>支持一下！</a
 				>
 			</span>
 		</div>
@@ -98,7 +120,7 @@ img {
 }
 
 .avatar-container {
-	@apply w-full flex flex-col justify-center items-center mt-8;
+	@apply w-full flex flex-col justify-center items-center mt-4;
 }
 
 .avatar {
@@ -111,7 +133,7 @@ img {
 
 .author {
 	@apply inline-block py-0.5 mt-4
-	text-xs select-none;
+	text-xs text-center select-none;
 }
 
 .api-provide,

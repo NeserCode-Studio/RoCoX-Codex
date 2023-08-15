@@ -163,28 +163,9 @@ watch(checkedOption, (value) => {
 	@apply border-green-400 dark:border-green-500
   bg-green-200 dark:bg-green-700
   transform transition-all;
-	animation: jump 0.2s ease-in-out forwards;
 }
 .feature-item:has(.checked.feature-text) .feature-icon,
 .feature-item:has(.checked.feature-text) .feature-text {
 	@apply bg-green-200 dark:bg-green-700;
-}
-
-@keyframes jump {
-	0% {
-		@apply -translate-y-px;
-	}
-	25% {
-		@apply translate-y-px;
-	}
-	50% {
-		@apply -translate-y-px;
-	}
-	75% {
-		@apply -translate-y-0.5;
-	}
-	100% {
-		@apply translate-y-0;
-	}
 }
 </style>

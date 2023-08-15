@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref, computed, provide } from "vue"
+import { ref, computed, provide, onActivated } from "vue"
+import { useStorage } from "@vueuse/core"
 import SearchFilter from "../components/SearchFilter.vue"
 import FeatureFilter from "../components/FeatureFilter.vue"
 import SpiritList from "../components/SpiritList.vue"
@@ -9,6 +10,14 @@ import {
 	UpdateFeatureFunctionalKey,
 	UpdateSearchFunctionalKey,
 } from "../tokens"
+const slideDirection = useStorage(
+	"roco-navigation-transition-direction",
+	"slideleft"
+)
+
+onActivated(() => {
+	slideDirection.value = "slideright"
+})
 
 const selectedFeature = ref("")
 const inputSearch = ref("")
@@ -60,7 +69,7 @@ function pageUpdateFn(page: number) {
 </script>
 
 <template>
-	<div id="home">
+	<div>
 		<div class="filters">
 			<SearchFilter />
 			<FeatureFilter />

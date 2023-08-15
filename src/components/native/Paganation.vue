@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/20/solid"
 import { useThrottleFn } from "@vueuse/core"
-import { ref, toRefs } from "vue"
+import { Ref, ref, toRefs } from "vue"
 
 const $props = withDefaults(
 	defineProps<{
@@ -32,6 +32,7 @@ const $props = withDefaults(
 const { page, total, canJump, hasNext, hasPrev } = toRefs($props)
 const { pageUpdateFn } = $props
 const innerPage = ref(page.value)
+const bar: Ref<HTMLElement | null> = ref(null)
 
 function getDisabledClass(bool: boolean) {
 	return bool ? "disabled" : null
@@ -46,14 +47,19 @@ function submitPageChange(change?: "plus" | "minus") {
 }
 const throttleSubmitPageChange = useThrottleFn((change?: "plus" | "minus") => {
 	submitPageChange(change)
+	bar.value!.classList.remove("active")
 }, 800)
+const throttleSubmitPageChangeWithProgress = (change?: "plus" | "minus") => {
+	bar.value!.classList.add("active")
+	throttleSubmitPageChange(change)
+}
 </script>
 
 <template>
 	<div class="paganation">
 		<span
 			:class="['prev', 'operation', getDisabledClass(!hasPrev)]"
-			@click="throttleSubmitPageChange('minus')"
+			@click="throttleSubmitPageChangeWithProgress('minus')"
 		>
 			<ChevronLeftIcon class="icon" />
 		</span>
@@ -63,24 +69,25 @@ const throttleSubmitPageChange = useThrottleFn((change?: "plus" | "minus") => {
 			v-if="canJump && total && pageSize"
 			type="number"
 			:min="1"
-			@keyup.enter="throttleSubmitPageChange()"
+			@keyup.enter="throttleSubmitPageChangeWithProgress()"
 		/>
 		<span v-else class="page">{{ page }}</span>
 		<span
 			:class="['next', 'operation', getDisabledClass(!hasNext)]"
-			@click="throttleSubmitPageChange('plus')"
+			@click="throttleSubmitPageChangeWithProgress('plus')"
 		>
 			<ChevronRightIcon class="icon" />
 		</span>
 		<span v-if="canJump && total && pageSize" class="append-text"
 			>共 {{ Math.round(total / pageSize) }} 页</span
 		>
+		<span class="progress-bar" ref="bar"></span>
 	</div>
 </template>
 
 <style lang="postcss" scoped>
 .paganation {
-	@apply inline-flex justify-center items-center flex-wrap mt-4;
+	@apply relative inline-flex justify-center items-center flex-wrap mt-4;
 }
 .operation {
 	@apply inline-flex justify-center items-center px-0.5
@@ -114,5 +121,27 @@ const throttleSubmitPageChange = useThrottleFn((change?: "plus" | "minus") => {
 .append-text {
 	@apply inline-block mx-3
 	text-sm font-semibold select-none;
+}
+
+.progress-bar {
+	@apply absolute w-full max-w-[128px] h-0.5 bottom-0 left-0
+	bg-green-400 translate-y-2;
+}
+.progress-bar.active {
+	animation: linearProgress 0.5s linear forwards;
+}
+</style>
+
+<style lang="postcss">
+@keyframes linearProgress {
+	0% {
+		@apply bg-slate-400 w-0;
+	}
+	50% {
+		@apply w-1/2;
+	}
+	100% {
+		@apply bg-green-400 w-full;
+	}
 }
 </style>
