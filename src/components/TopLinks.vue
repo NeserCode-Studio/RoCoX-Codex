@@ -1,10 +1,18 @@
 <script lang="ts" setup>
+import { onActivated, ref } from "vue"
 import { RouterLink } from "vue-router"
 import { HomeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/20/solid"
+
+const hasActivedLink = ref(true)
+onActivated(() => {
+	hasActivedLink.value = !!document.querySelector(
+		".link.router-link-exact-active"
+	)
+})
 </script>
 
 <template>
-	<div id="top-links">
+	<div id="top-links" v-show="hasActivedLink">
 		<RouterLink draggable="false" class="link" to="/">
 			<HomeIcon class="icon" />
 			<span>图鉴</span>
@@ -12,6 +20,9 @@ import { HomeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/20/solid"
 		<RouterLink draggable="false" class="link" to="/about">
 			<QuestionMarkCircleIcon class="icon" />
 			<span>关于</span>
+		</RouterLink>
+		<RouterLink draggable="false" class="link" to="/angel/04bca0fe">
+			<span>Testing</span>
 		</RouterLink>
 	</div>
 </template>

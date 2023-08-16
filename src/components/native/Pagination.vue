@@ -56,7 +56,7 @@ const throttleSubmitPageChangeWithProgress = (change?: "plus" | "minus") => {
 </script>
 
 <template>
-	<div class="paganation">
+	<div class="pagination">
 		<span
 			:class="['prev', 'operation', getDisabledClass(!hasPrev)]"
 			@click="throttleSubmitPageChangeWithProgress('minus')"
@@ -86,7 +86,7 @@ const throttleSubmitPageChangeWithProgress = (change?: "plus" | "minus") => {
 </template>
 
 <style lang="postcss" scoped>
-.paganation {
+.pagination {
 	@apply relative inline-flex justify-center items-center flex-wrap mt-4;
 }
 .operation {

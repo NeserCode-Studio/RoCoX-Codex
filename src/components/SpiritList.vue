@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { toRefs, watch } from "vue"
+import { Ref, ref, toRefs, watch } from "vue"
 import { useApi } from "../composables/useApi"
 import { computedAsync, useStorage } from "@vueuse/core"
 
 import { CubeTransparentIcon, BugAntIcon } from "@heroicons/vue/20/solid"
+import { WindowCreator } from "../composables/useWindow"
 
 const $props = withDefaults(
 	defineProps<{
@@ -61,11 +62,28 @@ function getFeatureIconSrc(featureIndex: string) {
 function getAngelIconSrc(iconSrc: string) {
 	return `${iconStaticURL}${iconSrc}`
 }
+
+const angelPageTitle = useStorage("roco-angel-page-title", "一只迪莫小可爱")
+const AngelWindow: Ref<WindowCreator | null> = ref(null)
+
+function setupWindowParams(id: string, name: string, hash: string) {
+	angelPageTitle.value = `#${id} ${name}`
+	AngelWindow.value = new WindowCreator(id, {
+		url: `/#/angel/${hash}`,
+		title: angelPageTitle.value,
+	})
+	AngelWindow.value.setup()
+}
 </script>
 
 <template>
 	<div class="angel-list-main">
-		<div class="angel-card" v-for="angel in listData" :key="angel.hash">
+		<div
+			class="angel-card"
+			v-for="angel in listData"
+			:key="angel.hash"
+			@click="setupWindowParams(angel.id, angel.name, angel.hash)"
+		>
 			<span class="details">
 				<span class="name-text">#{{ angel.id }} · {{ angel.name }}</span>
 				<span class="features">

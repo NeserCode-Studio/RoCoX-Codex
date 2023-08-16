@@ -12,6 +12,11 @@ const routes: Array<RouteRecordRaw> = [
 		name: "About",
 		component: () => import("./views/About.vue"),
 	},
+	{
+		path: "/angel/:hash",
+		name: "Angel",
+		component: () => import("./views/Angel.vue"),
+	},
 ]
 
 const router = createRouter({

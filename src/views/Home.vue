@@ -4,7 +4,7 @@ import { useStorage } from "@vueuse/core"
 import SearchFilter from "../components/SearchFilter.vue"
 import FeatureFilter from "../components/FeatureFilter.vue"
 import SpiritList from "../components/SpiritList.vue"
-import Paganation from "../components/native/Paganation.vue"
+import Pagination from "../components/native/Pagination.vue"
 
 import {
 	UpdateFeatureFunctionalKey,
@@ -21,15 +21,15 @@ onActivated(() => {
 
 const selectedFeature = ref("")
 const inputSearch = ref("")
-const paganationProps = ref({
+const paginationProps = ref({
 	listSize: 0,
 	pageSize: 0,
 	total: 0,
 })
-const paganationPage = ref(1)
-const hasPrev = computed(() => !(paganationPage.value === 1))
+const paginationPage = ref(1)
+const hasPrev = computed(() => !(paginationPage.value === 1))
 const hasNext = computed(
-	() => paganationProps.value.listSize === paganationProps.value.pageSize
+	() => paginationProps.value.listSize === paginationProps.value.pageSize
 )
 const canJump = computed(
 	() => selectedFeature.value === "" && inputSearch.value === ""
@@ -38,33 +38,33 @@ const canJump = computed(
 const featureUpdateFn = (featureIndex: string) => {
 	if (selectedFeature.value === featureIndex) return false
 	selectedFeature.value = featureIndex
-	paganationPage.value = 1
+	paginationPage.value = 1
 	console.log("Home: Feature Change to", featureIndex)
 }
 const searchUpdateFn = (searchString: string) => {
 	if (inputSearch.value === searchString) return false
 	inputSearch.value = searchString
-	paganationPage.value = 1
+	paginationPage.value = 1
 	console.log("Home: Search Change to", searchString)
 }
 
 provide(UpdateFeatureFunctionalKey, { featureUpdateFn })
 provide(UpdateSearchFunctionalKey, { searchUpdateFn })
 
-function updatePaganationSize(data: {
+function updatePaginationSize(data: {
 	listSize: number
 	pageSize: number
 	total: number
 }) {
-	paganationProps.value.listSize = data.listSize
-	paganationProps.value.pageSize = data.pageSize
-	paganationProps.value.total = data.total
+	paginationProps.value.listSize = data.listSize
+	paginationProps.value.pageSize = data.pageSize
+	paginationProps.value.total = data.total
 }
 function pageUpdateFn(page: number) {
 	let totalPage = Math.round(
-		paganationProps.value.total / paganationProps.value.pageSize
+		paginationProps.value.total / paginationProps.value.pageSize
 	)
-	if (page <= totalPage && page > 0) paganationPage.value = page
+	if (page <= totalPage && page > 0) paginationPage.value = page
 }
 </script>
 
@@ -77,8 +77,8 @@ function pageUpdateFn(page: number) {
 		<SpiritList
 			:search="inputSearch"
 			:feature="selectedFeature"
-			:page="paganationPage"
-			@update:sizes="updatePaganationSize"
+			:page="paginationPage"
+			@update:sizes="updatePaginationSize"
 		/>
 		<div class="footer-image">
 			<img
@@ -88,13 +88,13 @@ function pageUpdateFn(page: number) {
 				alt="Roco Dimo"
 			/>
 		</div>
-		<Paganation
+		<Pagination
 			:can-jump="canJump"
 			:has-prev="hasPrev"
 			:has-next="hasNext"
-			:total="paganationProps.total"
-			:page-size="paganationProps.pageSize"
-			:page="paganationPage"
+			:total="paginationProps.total"
+			:page-size="paginationProps.pageSize"
+			:page="paginationPage"
 			:page-update-fn="pageUpdateFn"
 		/>
 	</div>
