@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import Menu from "./native/Menu.vue"
 import { onActivated, ref } from "vue"
 import { RouterLink } from "vue-router"
 import { HomeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/20/solid"
@@ -21,9 +22,7 @@ onActivated(() => {
 			<QuestionMarkCircleIcon class="icon" />
 			<span>关于</span>
 		</RouterLink>
-		<RouterLink draggable="false" class="link" to="/angel/04bca0fe">
-			<span>Testing</span>
-		</RouterLink>
+		<Menu />
 	</div>
 </template>
 

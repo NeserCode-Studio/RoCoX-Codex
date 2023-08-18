@@ -1,4 +1,4 @@
-import { WebviewWindow, WindowOptions } from "@tauri-apps/api/window"
+import { WebviewWindow, WindowOptions, getAll } from "@tauri-apps/api/window"
 
 export class WindowCreator {
 	private label: string = "DefaultLabel"
@@ -10,6 +10,7 @@ export class WindowCreator {
 		fullscreen: false,
 		title: this.label,
 		resizable: false,
+		center: true,
 	}
 	private window: WebviewWindow | null = null
 
@@ -26,9 +27,10 @@ export class WindowCreator {
 			// webview window successfully created
 			console.log("Window Creator Setup Success", label, options)
 		})
-		this.window.once("tauri://error", function (e) {
+		this.window.once("tauri://error", async function (e) {
 			// an error happened creating the webview window
 			console.log("Window Creator Setup Error", e)
+			await WebviewWindow.getByLabel(e.windowLabel)!.setFocus()
 		})
 	}
 }

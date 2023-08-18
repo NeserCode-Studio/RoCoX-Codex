@@ -77,7 +77,7 @@ function setupWindowParams(id: string, name: string, hash: string) {
 </script>
 
 <template>
-	<div class="angel-list-main">
+	<div class="angel-list-main custom-scrollbar">
 		<div
 			class="angel-card"
 			v-for="angel in listData"
@@ -139,15 +139,6 @@ function setupWindowParams(id: string, name: string, hash: string) {
 }
 </style>
 <style lang="postcss" scoped>
-.angel-list-main::-webkit-scrollbar {
-	@apply w-2;
-}
-.angel-list-main::-webkit-scrollbar-track {
-	@apply bg-slate-200 dark:bg-slate-600;
-}
-.angel-list-main::-webkit-scrollbar-thumb {
-	@apply bg-slate-400 shadow;
-}
 .angel-list-main {
 	@apply relative w-80 mt-8 h-80 flex flex-col items-center
   overflow-auto snap-y snap-mandatory;

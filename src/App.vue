@@ -29,7 +29,7 @@ const slideDirection = useStorage(
 	</div>
 </template>
 
-<style>
+<style lang="postcss">
 html.dark {
 	color-scheme: dark;
 }
@@ -37,6 +37,16 @@ html.dark {
 @font-face {
 	src: url("./assets/SourceHanSerifCN-VF.ttf");
 	font-family: "SourceHanSerifCN";
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+	@apply w-2;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+	@apply bg-slate-200 dark:bg-slate-600;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	@apply bg-slate-400 shadow;
 }
 </style>
 

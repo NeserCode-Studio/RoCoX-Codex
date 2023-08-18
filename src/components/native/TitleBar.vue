@@ -36,8 +36,8 @@ function minimize() {
 	appWindow.minimize()
 }
 
-function close() {
-	appWindow.close()
+async function close() {
+	await appWindow.close()
 }
 
 function addMoveClass(event: MouseEvent) {

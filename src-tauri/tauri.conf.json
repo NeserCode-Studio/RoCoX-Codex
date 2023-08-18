@@ -36,7 +36,8 @@
 				"title": "Roco Codex",
 				"width": 500,
 				"height": 600,
-				"decorations": false
+				"decorations": false,
+				"visible": false
 			}
 		],
 		"systemTray": {

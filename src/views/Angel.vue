@@ -1,11 +1,14 @@
 <script lang="ts" setup>
+import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue"
+
 import { ref, watch } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import { useApi } from "../composables/useApi"
 
 const $route = useRoute()
-const { getAngel } = useApi()
+const { getAngel, iconStaticURL, featureStaticURL } = useApi()
 
 const angelData = computedAsync(async (onCancel) => {
 	const abortController = new AbortController()
@@ -17,6 +20,17 @@ const angelData = computedAsync(async (onCancel) => {
 		abortController.signal
 	)
 })
+
+function getIconSrc() {
+	return `${iconStaticURL}${angelData.value.angel.iconSrc}`
+}
+function getFeatureIconSrc(featureIndex: string) {
+	return `${featureStaticURL}${featureIndex}.png`
+}
+
+function getSelectedTabClass(selectedIndex: number, index: number) {
+	return selectedIndex === index ? "selected" : null
+}
 
 const isLoadingData = ref(true)
 watch(angelData, (val) => {
@@ -30,41 +44,261 @@ function log() {
 </script>
 
 <template>
-	<div @click="log">
-		<div class="details" v-if="!isLoadingData">
+	<div @click="log" v-if="!isLoadingData">
+		<span class="names">
+			<span class="features">
+				<img
+					class="icon"
+					draggable="false"
+					v-for="feature in angelData.angel.features"
+					:src="getFeatureIconSrc(feature)"
+					alt="feature icon"
+				/>
+			</span>
+			<span class="name">{{ angelData.angel.name }}</span>
+		</span>
+		<div class="details">
 			<img
 				class="angel-img"
+				v-if="angelData.angel.img"
 				:src="angelData.angel.img"
 				alt="Angel Image"
+				draggable="false"
 				loading="lazy"
 			/>
+			<CubeTransparentIcon v-else class="icon angel-img" />
 			<span class="powers">
-				<span class="id power-item">{{ angelData.angel.id }}</span>
-				<span class="addtion power-item">{{ angelData.angel.add }}</span>
-				<span class="health power-item">{{ angelData.angel.sm }}</span>
-				<span class="physicalAttack power-item">{{ angelData.angel.wg }}</span>
-				<span class="physicalDefend power-item">{{ angelData.angel.fy }}</span>
-				<span class="magicAttack power-item">{{ angelData.angel.mg }}</span>
-				<span class="magicDefend power-item">{{ angelData.angel.mk }}</span>
-				<span class="speed power-item">{{ angelData.angel.sd }}</span>
+				<span class="id power-item" title="编号">
+					<span class="icon">
+						<img draggable="false" :src="getIconSrc()" alt="angel icon" />
+					</span>
+					<span class="value">#{{ angelData.angel.id }}</span></span
+				>
+				<span class="addtion power-item" title="种族总值">
+					<span class="icon">
+						<img
+							draggable="false"
+							src="https://res.17roco.qq.com/res/item/67371874.png"
+							alt="addtion"
+						/>
+					</span>
+					<span class="value">{{ angelData.angel.add }}</span></span
+				>
+				<span class="health power-item" title="精力">
+					<span class="icon">
+						<img
+							draggable="false"
+							src="https://res.17roco.qq.com/plugins/WorldMap/icons/00039.png"
+							alt="health"
+					/></span>
+					<span class="value">{{ angelData.angel.sm }}</span></span
+				>
+				<span class="physicalAttack power-item" title="物攻">
+					<span class="icon">
+						<img
+							draggable="false"
+							src="https://res.17roco.qq.com/plugins/WorldMap/icons/00032.png"
+							alt="physicalAttack"
+						/>
+					</span>
+					<span class="value">{{ angelData.angel.wg }}</span></span
+				>
+				<span class="physicalDefend power-item" title="物抗">
+					<span class="icon">
+						<img
+							draggable="false"
+							src="https://res.17roco.qq.com/plugins/WorldMap/icons/00033.png"
+							alt="physicalDefend"
+						/>
+					</span>
+					<span class="value">{{ angelData.angel.fy }}</span></span
+				>
+				<span class="magicAttack power-item" title="魔攻">
+					<span class="icon">
+						<img
+							draggable="false"
+							src="https://res.17roco.qq.com/plugins/WorldMap/icons/00034.png"
+							alt="magicAttack"
+					/></span>
+					<span class="value">{{ angelData.angel.mg }}</span></span
+				>
+				<span class="magicDefend power-item" title="魔抗">
+					<span class="icon">
+						<img
+							draggable="false"
+							src="https://res.17roco.qq.com/plugins/WorldMap/icons/00035.png"
+							alt="magicDefend"
+						/>
+					</span>
+					<span class="value">{{ angelData.angel.mk }}</span></span
+				>
+				<span class="speed power-item" title="速度">
+					<span class="icon">
+						<img
+							draggable="false"
+							src="https://res.17roco.qq.com/plugins/WorldMap/icons/00036.png"
+							alt="speed"
+						/>
+					</span>
+					<span class="value">{{ angelData.angel.sd }}</span></span
+				>
 			</span>
+		</div>
+		<div class="info-tab">
+			<TabGroup class="flex tab-group" as="div">
+				<TabList class="tab-list" v-slot="{ selectedIndex }">
+					<Tab :class="['tab', getSelectedTabClass(selectedIndex, 0)]"
+						>资料</Tab
+					>
+					<Tab
+						:class="['tab', getSelectedTabClass(selectedIndex, 1)]"
+						v-if="angelData.skills"
+						>技能 {{ Object.keys(angelData.skills).length }}</Tab
+					>
+				</TabList>
+				<TabPanels class="tab-panels">
+					<TabPanel class="tab-panel info">
+						<div class="info-main custom-scrollbar">
+							<span class="info-item hight"
+								>身高 · {{ angelData.angel.height }}</span
+							>
+							<span class="info-item weight"
+								>体重 · {{ angelData.angel.weight }}</span
+							>
+							<span class="info-item color"
+								>颜色 · {{ angelData.angel.color }}</span
+							>
+							<span class="info-item exp-type"
+								>经验类型 · {{ angelData.angel.expType }}</span
+							>
+							<span class="info-item group"
+								>组别 · {{ angelData.angel.group }} ·
+								{{ angelData.angel.groupName }}</span
+							>
+							<span class="info-item catch-rate"
+								>捕捉系数 · {{ angelData.angel.catchrate }}</span
+							>
+							<span class="info-item habit"
+								>爱好 · {{ angelData.angel.interest }}</span
+							>
+							<span class="info-item description"
+								>简介 · {{ angelData.angel.description }}</span
+							>
+						</div>
+					</TabPanel>
+					<TabPanel class="tab-panel skill">
+						<div class="skill-main custom-scrollbar">
+							<span
+								v-for="skill of angelData.skills"
+								class="skill-item"
+								:key="skill.id"
+							>
+								<img
+									class="feature icon"
+									:src="getFeatureIconSrc(skill.property)"
+									alt="skill property"
+								/>
+								<span class="name">{{ skill.name }}</span>
+								<span class="skill-details"
+									>{{ skill.ppMax }}·{{ skill.power }}</span
+								>
+							</span>
+						</div>
+					</TabPanel>
+				</TabPanels>
+			</TabGroup>
 		</div>
 	</div>
 </template>
 
+<style lang="postcss">
+.tab-group {
+	@apply w-full flex-col select-none;
+}
+.tab-list {
+	@apply inline-flex items-center justify-center p-0.5 mx-auto
+	bg-slate-200 dark:bg-slate-800
+	rounded overflow-hidden transition-all;
+}
+.tab {
+	@apply w-24 inline-flex items-center justify-center
+	focus:ring-2 ring-green-400 dark:ring-green-600
+	rounded outline-none overflow-hidden transition-all font-black;
+}
+.tab.selected {
+	@apply bg-slate-50 dark:bg-slate-600;
+}
+
+.tab-panels {
+	@apply w-full p-0.5 mt-1
+	rounded overflow-hidden transition-all;
+}
+.tab-panel {
+	@apply w-96 inline-flex
+	rounded overflow-hidden transition-all;
+}
+</style>
 <style lang="postcss" scoped>
+.names {
+	@apply inline-flex w-2/3 py-2 items-center justify-center mt-4
+	border-2 border-slate-400 bg-green-200 dark:border-slate-300 dark:bg-green-600
+	truncate transition-all rounded-full font-black select-none;
+}
+.names .features {
+	@apply inline-flex mx-2 items-center;
+}
+.features .icon {
+	@apply w-6 h-6 inline-block mx-1;
+}
+
 .details {
-	@apply w-full inline-flex justify-center items-center mt-4;
+	@apply w-full inline-flex justify-center items-center px-4
+	select-none;
 }
 
 .angel-img {
-	@apply w-1/2 p-4;
+	@apply w-48 my-4;
+}
+.angel-img.icon {
+	@apply p-8;
 }
 
 .powers {
-	@apply w-1/2 inline-flex items-center justify-between flex-wrap p-4;
+	@apply w-1/2 inline-flex items-center justify-evenly flex-wrap p-4
+	select-none;
 }
 .power-item {
-	@apply w-1/3 mx-2;
+	@apply relative w-[45%] my-0.5 px-2 py-1 inline-flex justify-between items-center
+	border-2 rounded-full overflow-hidden
+	border-slate-300 bg-slate-200 dark:border-slate-600 dark:bg-slate-500
+	transition-all text-sm font-semibold;
+}
+.power-item .icon {
+	@apply inline-block w-5 h-5;
+}
+
+.power-item.id .icon {
+	@apply absolute w-7 h-7 right-0;
+}
+
+.info-main,
+.skill-main {
+	@apply max-h-40 flex flex-wrap justify-start
+	overflow-auto;
+}
+.info-item,
+.skill-item {
+	@apply w-fit inline-flex items-center justify-center my-0.5 px-1 py-0.5 mx-0.5
+	border border-slate-400 dark:border-slate-400
+	bg-slate-200 dark:bg-slate-600
+	rounded text-sm font-semibold;
+}
+
+.skill-item .icon {
+	@apply inline-block w-4 h-4 mr-0.5;
+}
+.skill-details {
+	@apply inline-block ml-0.5
+	text-xs;
 }
 </style>
