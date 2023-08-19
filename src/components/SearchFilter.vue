@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, inject, watch } from "vue"
 import { UpdateSearchFunctionalKey } from "../tokens"
+import { useStorage } from "@vueuse/core"
 const innerValue = ref("")
 
 const { searchUpdateFn } = inject<{
@@ -14,6 +15,17 @@ watch(innerValue, (value) => {
 function submitChangetoTop() {
 	searchUpdateFn(innerValue.value)
 }
+
+const category = useStorage("roco-categroy", "angels")
+const categoryNameMap = new Map([
+	["angels", "精灵"],
+	["skills", "技能"],
+	["items", "物品"],
+])
+
+function getMatchPlaceHolder() {
+	return `键入${categoryNameMap.get(category.value)}编号、名称等回车以查找`
+}
 </script>
 
 <template>
@@ -23,7 +35,7 @@ function submitChangetoTop() {
 			v-model="innerValue"
 			@keyup.enter="submitChangetoTop"
 			type="text"
-			placeholder="键入宠物编号、名称等"
+			:placeholder="getMatchPlaceHolder()"
 		/>
 	</div>
 </template>

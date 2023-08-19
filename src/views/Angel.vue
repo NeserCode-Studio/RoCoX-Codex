@@ -193,15 +193,17 @@ function log() {
 								class="skill-item"
 								:key="skill.id"
 							>
-								<img
-									class="feature icon"
-									:src="getFeatureIconSrc(skill.property)"
-									alt="skill property"
-								/>
+								<span class="id">#{{ skill.id }}</span>
 								<span class="name">{{ skill.name }}</span>
-								<span class="skill-details"
-									>{{ skill.ppMax }}·{{ skill.power }}</span
-								>
+								<span class="skill-details">
+									<img
+										class="feature icon"
+										:src="getFeatureIconSrc(skill.property)"
+										alt="skill property"
+									/>
+									<span class="pp">{{ skill.ppMax }}</span> ·
+									<span class="power">{{ skill.power }}</span>
+								</span>
 							</span>
 						</div>
 					</TabPanel>
@@ -295,10 +297,24 @@ function log() {
 }
 
 .skill-item .icon {
-	@apply inline-block w-4 h-4 mr-0.5;
+	@apply inline-block w-3 h-3 mr-0.5;
+}
+.skill-item .id {
+	@apply inline-block mr-0.5
+	text-xs;
 }
 .skill-details {
-	@apply inline-block ml-0.5
-	text-xs;
+	@apply inline-flex items-center ml-0.5 px-1 py-px
+	border border-green-500 bg-green-200 dark:bg-green-700
+	rounded-sm box-content
+	text-xs font-black transition-all;
+}
+.skill-details .pp {
+	@apply text-blue-600 dark:text-blue-200
+	transition-all;
+}
+.skill-details .power {
+	@apply text-red-500 dark:text-red-300
+	transition-all;
 }
 </style>

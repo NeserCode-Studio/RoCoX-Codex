@@ -1,28 +1,42 @@
 <script lang="ts" setup>
+import { BookOpenIcon, QuestionMarkCircleIcon } from "@heroicons/vue/20/solid"
 import Menu from "./native/Menu.vue"
-import { onActivated, ref } from "vue"
-import { RouterLink } from "vue-router"
-import { HomeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/20/solid"
+import { computed } from "vue"
+import { RouterLink, useRoute } from "vue-router"
+import { useStorage } from "@vueuse/core"
 
-const hasActivedLink = ref(true)
-onActivated(() => {
-	hasActivedLink.value = !!document.querySelector(
-		".link.router-link-exact-active"
+const $route = useRoute()
+const shouldShowLinksPath = ["home", "about"]
+const hasActivedLink = computed(() => {
+	return shouldShowLinksPath.includes(
+		(($route.name as string) ?? "home").toLowerCase()
 	)
 })
+
+const category = useStorage("roco-categroy", "angels")
+const categoryNameMap = new Map([
+	["angels", "精灵"],
+	["skills", "技能"],
+	["items", "物品"],
+])
+
+function getMatchCategroyName() {
+	return categoryNameMap.get(category.value)
+}
 </script>
 
 <template>
 	<div id="top-links" v-show="hasActivedLink">
+		<Menu class="links-menu" />
+
 		<RouterLink draggable="false" class="link" to="/">
-			<HomeIcon class="icon" />
-			<span>图鉴</span>
+			<BookOpenIcon class="icon" />
+			<span class="text">{{ getMatchCategroyName() }}</span>
 		</RouterLink>
 		<RouterLink draggable="false" class="link" to="/about">
 			<QuestionMarkCircleIcon class="icon" />
-			<span>关于</span>
+			<span class="text">关于</span>
 		</RouterLink>
-		<Menu />
 	</div>
 </template>
 
@@ -34,7 +48,7 @@ onActivated(() => {
 .link {
 	@apply inline-flex justify-center items-center mx-1 px-2.5 py-1
   bg-slate-200 dark:bg-slate-800
-  font-semibold shadow
+  text-base font-black shadow
   rounded transition-all select-none;
 }
 .link.router-link-exact-active {
@@ -44,5 +58,9 @@ onActivated(() => {
 
 .link .icon {
 	@apply w-4 h-4 mr-1;
+}
+
+.links-menu {
+	@apply fixed left-4 z-10;
 }
 </style>
