@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { BookOpenIcon, QuestionMarkCircleIcon } from "@heroicons/vue/20/solid"
 import Menu from "./native/Menu.vue"
+import GoBack from "./native/GoBack.vue"
 import { computed } from "vue"
 import { RouterLink, useRoute } from "vue-router"
 import { useStorage } from "@vueuse/core"
@@ -19,25 +20,26 @@ const categoryNameMap = new Map([
 	["skills", "技能"],
 	["items", "物品"],
 ])
-
 function getMatchCategroyName() {
 	return categoryNameMap.get(category.value)
 }
 </script>
 
 <template>
-	<div id="top-links" v-show="hasActivedLink">
-		<Menu class="links-menu" />
-
-		<RouterLink draggable="false" class="link" to="/">
-			<BookOpenIcon class="icon" />
-			<span class="text">{{ getMatchCategroyName() }}</span>
-		</RouterLink>
-		<RouterLink draggable="false" class="link" to="/about">
-			<QuestionMarkCircleIcon class="icon" />
-			<span class="text">关于</span>
-		</RouterLink>
-	</div>
+	<Transition name="slideup" mode="in-out" appear>
+		<div id="top-links" v-show="hasActivedLink">
+			<Menu class="links-menu" />
+			<GoBack />
+			<RouterLink draggable="false" class="link" to="/">
+				<BookOpenIcon class="icon" />
+				<span class="text">{{ getMatchCategroyName() }}</span>
+			</RouterLink>
+			<RouterLink draggable="false" class="link" to="/about">
+				<QuestionMarkCircleIcon class="icon" />
+				<span class="text">关于</span>
+			</RouterLink>
+		</div>
+	</Transition>
 </template>
 
 <style lang="postcss" scoped>

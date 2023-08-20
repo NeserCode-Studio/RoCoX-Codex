@@ -3,14 +3,21 @@ import TitleBar from "./components/native/TitleBar.vue"
 import Dialog from "./components/Dialog.vue"
 import TopLinks from "./components/TopLinks.vue"
 
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import { useStorage } from "@vueuse/core"
+import { nextTickToShow } from "./composables/useLocal"
 
 const isOpenModelDialog = ref(false)
 const slideDirection = useStorage(
 	"roco-navigation-transition-direction",
 	"slideleft"
 )
+
+onMounted(() => {
+	setTimeout(() => {
+		nextTickToShow()
+	}, 0)
+})
 </script>
 
 <template>
@@ -50,9 +57,13 @@ html.dark {
 }
 </style>
 
-<style lang="postcss" scoped>
+<style lang="postcss">
 .slideleft-enter-active,
 .slideleft-leave-active,
+.slideup-enter-active,
+.slideup-leave-active,
+.slidedown-enter-active,
+.slidedown-leave-active,
 .slideright-enter-active,
 .slideright-leave-active {
 	@apply transition-all;
@@ -65,6 +76,18 @@ html.dark {
 .slideright-enter-from,
 .slideright-leave-to {
 	@apply -translate-x-4 opacity-0;
+}
+.slideup-enter-from {
+	@apply translate-y-0 opacity-0;
+}
+.slideup-leave-to {
+	@apply translate-y-2 opacity-0;
+}
+.slidedown-enter-from {
+	@apply translate-y-0 opacity-0;
+}
+.slidedown-leave-to {
+	@apply -translate-y-2 opacity-0;
 }
 </style>
 

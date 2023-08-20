@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import GoBack from "../components/native/GoBack.vue"
 import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue"
 
@@ -46,6 +47,7 @@ function log() {
 <template>
 	<div @click="log" v-if="!isLoadingData">
 		<span class="names">
+			<GoBack class="go-back" />
 			<span class="features">
 				<img
 					class="icon"
@@ -252,6 +254,9 @@ function log() {
 .features .icon {
 	@apply w-6 h-6 inline-block mx-1;
 }
+.go-back {
+	@apply left-8;
+}
 
 .details {
 	@apply w-full inline-flex justify-center items-center px-4
@@ -285,7 +290,7 @@ function log() {
 
 .info-main,
 .skill-main {
-	@apply max-h-40 flex flex-wrap justify-start
+	@apply max-h-48 flex flex-wrap justify-center
 	overflow-auto;
 }
 .info-item,

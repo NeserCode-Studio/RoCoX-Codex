@@ -2,7 +2,6 @@ import { createApp } from "vue"
 import "./styles.css"
 import router from "./router"
 import App from "./App.vue"
-import { nextTickToShow } from "./composables/useLocal"
 
 import NProgress from "nprogress"
 import "nprogress/nprogress.css" // nprogress样式文件
@@ -26,4 +25,3 @@ router.afterEach(() => {
 })
 
 createApp(App).use(router).mount("#app")
-nextTickToShow()

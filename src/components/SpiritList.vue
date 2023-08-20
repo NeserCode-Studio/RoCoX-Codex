@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Ref, ref, toRefs, watch } from "vue"
+import { useRouter } from "vue-router"
 import { useApi } from "../composables/useApi"
 import { computedAsync, useStorage } from "@vueuse/core"
 
@@ -63,6 +64,8 @@ function getAngelIconSrc(iconSrc: string) {
 	return `${iconStaticURL}${iconSrc}`
 }
 
+const $router = useRouter()
+const alwaysTargetNewWindow = useStorage("roco-new-window-target", false)
 const angelPageTitle = useStorage("roco-angel-page-title", "一只迪莫小可爱")
 const AngelWindow: Ref<WindowCreator | null> = ref(null)
 
@@ -72,7 +75,16 @@ function setupWindowParams(id: string, name: string, hash: string) {
 		url: `/#/angel/${hash}`,
 		title: angelPageTitle.value,
 	})
-	AngelWindow.value.setup()
+
+	goAngelView(hash)
+}
+function goAngelView(hash: string) {
+	if (alwaysTargetNewWindow.value) AngelWindow.value!.setup()
+	else
+		$router.push({
+			name: "Angel",
+			params: { hash },
+		})
 }
 </script>
 

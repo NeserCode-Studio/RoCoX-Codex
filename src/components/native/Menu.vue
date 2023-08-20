@@ -3,6 +3,8 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
 import {
 	EllipsisHorizontalIcon,
 	ArrowsRightLeftIcon,
+	ArrowTopRightOnSquareIcon,
+	HomeModernIcon,
 } from "@heroicons/vue/20/solid"
 import { useStorage } from "@vueuse/core"
 
@@ -12,6 +14,11 @@ function isMatchCategoryOption(key: string): boolean {
 }
 function turnToCategory(key: "angels" | "skills" | "items") {
 	category.value = key
+}
+
+const alwaysTargetNewWindow = useStorage("roco-new-window-target", false)
+function toggleTargetMode() {
+	alwaysTargetNewWindow.value = !alwaysTargetNewWindow.value
 }
 </script>
 
@@ -86,8 +93,17 @@ function turnToCategory(key: "angels" | "skills" | "items") {
 							>
 						</MenuItem>
 					</div>
-					<MenuItem as="div" class="menu-item" v-slot="{ disabled, active }">
-						<ArrowsRightLeftIcon class="icon" />
+					<MenuItem
+						as="div"
+						class="menu-item"
+						v-slot="{ disabled, active }"
+						@click="toggleTargetMode()"
+					>
+						<ArrowTopRightOnSquareIcon
+							v-show="!alwaysTargetNewWindow"
+							class="icon"
+						/>
+						<HomeModernIcon v-show="alwaysTargetNewWindow" class="icon" />
 						<span
 							:class="[
 								'text',
@@ -95,7 +111,9 @@ function turnToCategory(key: "angels" | "skills" | "items") {
 								active ? 'active' : null,
 							]"
 							title="切换浏览模式"
-							>总是打开新页面</span
+							>{{
+								alwaysTargetNewWindow ? "总在当前页面" : "总是打开新页面"
+							}}</span
 						>
 					</MenuItem>
 				</MenuItems>
@@ -111,7 +129,7 @@ function turnToCategory(key: "angels" | "skills" | "items") {
 
 .menu-button {
 	@apply py-1 px-1.5
-	bg-slate-200 dark:bg-slate-600
+	bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-300
 	focus:ring-2 ring-green-400 dark:ring-green-500
 	rounded transition-all outline-none shadow-md;
 }

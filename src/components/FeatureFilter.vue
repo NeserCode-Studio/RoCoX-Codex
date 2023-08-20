@@ -52,7 +52,9 @@ watch(checkedOption, (value) => {
 
 <template>
 	<Popover as="div" v-slot="{ open, close }">
-		<PopoverButton class="transition-all shadow-lg outline-none">
+		<PopoverButton
+			class="transition-all rounded shadow-lg outline-none focus:ring-2 ring-green-300 dark:ring-green-500"
+		>
 			<div class="btn-context">
 				<img
 					v-if="checkedOption !== ''"
