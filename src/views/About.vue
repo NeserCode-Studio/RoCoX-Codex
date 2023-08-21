@@ -1,19 +1,35 @@
 <script lang="ts" setup>
 import { onActivated } from "vue"
 import { useStorage } from "@vueuse/core"
+import { getTauriVersion, getName, getVersion } from "@tauri-apps/api/app"
 
-const isFullRound = useStorage("roco-avatar-rounded", false)
+const isFullRound = useStorage("rocox-avatar-rounded", false)
 const slideDirection = useStorage(
-	"roco-navigation-transition-direction",
+	"rocox-navigation-transition-direction",
 	"slideleft"
 )
+const $TauriVersion = useStorage("rocox-use-tauri-version", "0.0.0")
+const $AppName = useStorage("rocox-application-name", "")
+const $AppVersion = useStorage("rocox-application-version", "")
 
+async function getTauriVersionAsync() {
+	return await getTauriVersion()
+}
+async function getAppNameAsync() {
+	return await getName()
+}
+async function getAppVersionAsync() {
+	return await getVersion()
+}
 function toggleAvatarRounded() {
 	isFullRound.value = !isFullRound.value
 }
 
-onActivated(() => {
+onActivated(async () => {
 	slideDirection.value = "slideleft"
+	$TauriVersion.value = await getTauriVersionAsync()
+	$AppName.value = await getAppNameAsync()
+	$AppVersion.value = await getAppVersionAsync()
 })
 </script>
 
@@ -95,6 +111,11 @@ onActivated(() => {
 				alt="TypeScript Language"
 			/>
 		</span>
+		<span class="font-black">·</span>
+		<span class="versions">
+			<span>{{ $AppName }}@{{ $AppVersion }}</span>
+			<span>Tauri@{{ $TauriVersion }}</span>
+		</span>
 		<span class="warn-massage">
 			应用中部分资源来源自网络 <br />
 			若这部分资源的使用侵犯了您的权力，请告知 <br />
@@ -151,6 +172,11 @@ img {
 }
 .images .icon {
 	@apply inline-block w-8 h-8 mx-1;
+}
+
+.versions {
+	@apply inline-flex flex-col items-center justify-center
+	font-black text-xs;
 }
 
 .warn-massage,

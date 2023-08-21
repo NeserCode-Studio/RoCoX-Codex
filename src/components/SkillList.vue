@@ -1,10 +1,9 @@
 <script lang="ts" setup>
+import { CubeTransparentIcon, BugAntIcon } from "@heroicons/vue/20/solid"
 import { Ref, ref, toRefs, watch } from "vue"
-import { useRouter } from "vue-router"
 import { useApi } from "../composables/useApi"
 import { computedAsync, useStorage } from "@vueuse/core"
-
-import { CubeTransparentIcon, BugAntIcon } from "@heroicons/vue/20/solid"
+import { useRouter } from "vue-router"
 import { WindowCreator } from "../composables/useWindow"
 
 const $props = withDefaults(
@@ -23,13 +22,13 @@ const $props = withDefaults(
 )
 
 const { id, search, feature, page } = toRefs($props)
-const { getAngelList, iconStaticURL, featureStaticURL } = useApi()
+const { getSkillList, damageTypeStaticMap, featureStaticURL } = useApi()
 
 const listData = computedAsync(async (onCancel) => {
 	const abortController = new AbortController()
 
 	onCancel(() => abortController.abort())
-	return await getAngelList(
+	return await getSkillList(
 		{
 			id: id.value,
 			search: search.value,
@@ -39,9 +38,14 @@ const listData = computedAsync(async (onCancel) => {
 		abortController.signal
 	)
 })
+
+function getFeatureIconSrc(propertyIndex: string) {
+	return `${featureStaticURL}${propertyIndex}.png`
+}
+
 const isEmpty = computedAsync(() => listData.value.length === 0)
-const pageSize = useStorage("rocox-api-angel-list-size", 21)
-const totalFromID = useStorage("rocox-api-angel-max-id", 0)
+const pageSize = useStorage("rocox-api-skill-list-size", 21)
+const totalFromID = useStorage("rocox-api-skill-max-id", 0)
 
 const $emits = defineEmits(["update:sizes"])
 
@@ -57,23 +61,16 @@ watch(listData, (val: any[]) => {
 	})
 })
 
-function getFeatureIconSrc(featureIndex: string) {
-	return `${featureStaticURL}${featureIndex}.png`
-}
-function getAngelIconSrc(iconSrc: string) {
-	return `${iconStaticURL}${iconSrc}`
-}
-
 const $router = useRouter()
 const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
-const angelPageTitle = useStorage("rocox-angel-page-title", "")
+const skillPageTitle = useStorage("rocox-skill-page-title", "")
 const AngelWindow: Ref<WindowCreator | null> = ref(null)
 
 function setupWindowParams(id: string, name: string, hash: string) {
-	angelPageTitle.value = `#${id} ${name}`
+	skillPageTitle.value = `#${id} ${name}`
 	AngelWindow.value = new WindowCreator(id, {
-		url: `/#/angel/${hash}`,
-		title: angelPageTitle.value,
+		url: `/#/skill/${hash}`,
+		title: skillPageTitle.value,
 	})
 
 	goAngelView(hash)
@@ -82,50 +79,48 @@ function goAngelView(hash: string) {
 	if (alwaysTargetNewWindow.value) AngelWindow.value!.setup()
 	else
 		$router.push({
-			name: "Angel",
+			name: "Skill",
 			params: { hash },
 		})
 }
 </script>
 
 <template>
-	<div class="angel-list-main custom-scrollbar">
+	<div class="skill-list-main custom-scrollbar">
 		<div
-			class="angel-card"
-			v-for="angel in listData"
-			:key="angel.hash"
-			@click="setupWindowParams(angel.id, angel.name, angel.hash)"
+			class="skill-card"
+			v-for="skill in listData"
+			:key="skill.hash"
+			@click="setupWindowParams(skill.id, skill.name, skill.hash)"
 		>
+			<span class="name-text">
+				<span class="id">#{{ skill.id }}</span>
+				<span class="name">{{ skill.name }}</span>
+			</span>
 			<span class="details">
-				<span class="name-text">#{{ angel.id }} · {{ angel.name }}</span>
-				<span class="features">
+				<span class="icons">
 					<img
-						draggable="false"
-						class="feature-icon icon"
-						referrerPolicy="no-referrer"
-						v-for="key in angel.features"
-						:key="key"
-						:src="getFeatureIconSrc(key)"
-						loading="lazy"
+						v-if="skill.property"
+						class="icon property"
+						:src="getFeatureIconSrc(skill.property)"
+						alt="skill property"
+					/>
+					<img
+						v-if="skill.power !== '--'"
+						class="icon damage"
+						:src="damageTypeStaticMap.get(skill.damageType)"
+						:alt="skill.damageType === '1' ? '物理伤害' : '魔法伤害'"
+						:title="skill.damageType === '1' ? '物理伤害' : '魔法伤害'"
 					/>
 				</span>
-				<img
-					draggable="false"
-					class="angel-icon icon"
-					v-show="angel.img"
-					:src="getAngelIconSrc(angel.iconSrc)"
-					alt="angel icon"
-					referrerPolicy="no-referrer"
-					loading="lazy"
-				/>
-				<CubeTransparentIcon
-					v-show="!angel.img"
-					draggable="false"
-					class="icon-palceholder icon"
-				/>
+				<span class="text">
+					<span class="ppMax" title="pp总量">{{ skill.ppMax }}</span> ·
+					<span class="power" title="威力值">{{ skill.power }}</span> ·
+					<span class="speed" title="速度值">{{ skill.speed }}</span>
+				</span>
 			</span>
 		</div>
-		<Transition name="slidein" mode="in-out" :appear="true">
+		<Transition name="slidedown" mode="in-out" :appear="true">
 			<div class="empty-palceholder" v-if="isEmpty">
 				<span class="empty-icons">
 					<CubeTransparentIcon class="icon" /> ·
@@ -140,55 +135,59 @@ function goAngelView(hash: string) {
 </template>
 
 <style lang="postcss" scoped>
-.slidein-enter-active,
-.slidein-leave-active {
-	@apply transition-all duration-500;
-}
-
-.slidein-enter-from,
-.slidein-leave-to {
-	@apply opacity-0 scale-50;
-}
-</style>
-<style lang="postcss" scoped>
-.angel-list-main {
-	@apply relative w-full mt-8 h-[22rem] flex flex-wrap items-start justify-center content-start
+.skill-list-main {
+	@apply flex flex-wrap w-full mt-8 h-[22rem] items-start justify-center content-start
   overflow-auto snap-y snap-mandatory;
 }
-.angel-card {
-	@apply h-8 flex flex-col mb-1 mr-1
+
+.skill-card {
+	@apply flex flex-col mb-1 mr-1
   border-2 border-slate-200 dark:border-slate-600
   hover:bg-slate-100 active:bg-slate-200 active:border-slate-300
   dark:hover:bg-slate-600 dark:active:bg-slate-800 dark:active:border-slate-600
   rounded select-none transition-all snap-start cursor-pointer;
 }
 
-.details {
-	@apply relative w-full h-12 inline-flex items-center justify-start;
+.skill-card .name-text {
+	@apply inline-flex items-center justify-between
+  font-semibold text-sm;
+}
+.name-text .id {
+	@apply inline-block ml-1 mr-2;
+}
+.name-text .name {
+	@apply inline-block ml-2 mr-1;
 }
 
-.name-text {
-	@apply inline-block pr-2 mx-2
-  text-sm font-black border-r
-  border-gray-300 dark:border-gray-500
-  truncate transition-all;
+.skill-card .details {
+	@apply inline-flex items-center justify-between;
+}
+.details .icons {
+	@apply inline-block ml-1 mr-2;
+}
+.details .text {
+	@apply inline-block ml-2 mr-1
+  font-semibold text-sm;
 }
 
-.features {
-	@apply inline-flex justify-center items-center mr-8;
+.icons .icon {
+	@apply w-6 h-6 inline-block my-1 ml-1 p-1
+  border rounded
+  bg-slate-200 dark:bg-slate-600 border-slate-400 dark:border-slate-500
+  overflow-hidden;
 }
-.features .icon {
-	@apply w-4 h-4 inline-block p-px mr-0.5;
+.icon.damage {
+	@apply p-0;
 }
 
-.details .angel-icon {
-	@apply absolute right-0 w-7 h-7 inline-block
-  rounded-r;
+.text .ppMax {
+	@apply text-blue-700 dark:text-blue-400;
 }
-.icon-palceholder {
-	@apply absolute -right-1 w-11 h-11 inline-block p-3
-  text-slate-600 dark:text-slate-300
-  rounded-r transition-all;
+.text .power {
+	@apply text-red-700 dark:text-red-400;
+}
+.text .speed {
+	@apply text-sky-700 dark:text-sky-400;
 }
 
 .empty-palceholder {

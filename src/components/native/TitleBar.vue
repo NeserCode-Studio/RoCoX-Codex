@@ -11,8 +11,8 @@ import { useStorage, useThrottleFn } from "@vueuse/core"
 import { appWindow } from "@tauri-apps/api/window"
 import { useDarkMode } from "../../composables/useDarkMode"
 
-const title = ref("Roco Codex")
-const isAlwaysonTop = useStorage("roco-always-on-top", false)
+const title = ref("Rocox Codex")
+const isAlwaysonTop = useStorage("rocox-always-on-top", false)
 
 function getIspinnedClass() {
 	return isAlwaysonTop.value ? "pinned" : null

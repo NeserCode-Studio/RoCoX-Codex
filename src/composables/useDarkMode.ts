@@ -2,7 +2,7 @@ import { useDark, useToggle } from "@vueuse/core"
 
 export function useDarkMode() {
 	const isDarkMode = useDark({
-		storageKey: "roco-color-scheme",
+		storageKey: "rocox-color-scheme",
 		disableTransition: false,
 	})
 	const toggleDarkMode = useToggle(isDarkMode)

@@ -14,7 +14,7 @@ const hasActivedLink = computed(() => {
 	)
 })
 
-const category = useStorage("roco-categroy", "angels")
+const category = useStorage("rocox-categroy", "angels")
 const categoryNameMap = new Map([
 	["angels", "精灵"],
 	["skills", "技能"],
@@ -26,7 +26,7 @@ function getMatchCategroyName() {
 </script>
 
 <template>
-	<Transition name="slideup" mode="in-out" appear>
+	<Transition name="slideleft" mode="out-in" appear>
 		<div id="top-links" v-show="hasActivedLink">
 			<Menu class="links-menu" />
 			<GoBack />

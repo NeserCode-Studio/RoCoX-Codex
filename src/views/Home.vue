@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { ref, computed, provide, onActivated } from "vue"
+import { ref, computed, provide, onActivated, watch } from "vue"
 import { useStorage } from "@vueuse/core"
 import SearchFilter from "../components/SearchFilter.vue"
 import FeatureFilter from "../components/FeatureFilter.vue"
 import SpiritList from "../components/SpiritList.vue"
+import SkillList from "../components/SkillList.vue"
 import Pagination from "../components/native/Pagination.vue"
 
 import {
@@ -11,9 +12,24 @@ import {
 	UpdateSearchFunctionalKey,
 } from "../tokens"
 const slideDirection = useStorage(
-	"roco-navigation-transition-direction",
+	"rocox-navigation-transition-direction",
 	"slideleft"
 )
+const category = useStorage("rocox-categroy", "angels")
+const computedExtendingClass = computed(() => {
+	return ["angels", "skills"].includes(category.value) ? null : "extending"
+})
+const shouldShowFeatures = computed(() =>
+	["angels", "skills"].includes(category.value)
+)
+function shouldShowList(key: string): boolean {
+	return category.value === key
+}
+watch(category, () => {
+	paginationPage.value = 1
+	selectedFeature.value = ""
+	inputSearch.value = ""
+})
 
 onActivated(() => {
 	slideDirection.value = "slideright"
@@ -71,23 +87,23 @@ function pageUpdateFn(page: number) {
 <template>
 	<div>
 		<div class="filters">
-			<SearchFilter />
-			<FeatureFilter />
+			<SearchFilter :class="computedExtendingClass" />
+			<FeatureFilter v-if="shouldShowFeatures" />
 		</div>
 		<SpiritList
+			v-if="shouldShowList('angels')"
 			:search="inputSearch"
 			:feature="selectedFeature"
 			:page="paginationPage"
 			@update:sizes="updatePaginationSize"
 		/>
-		<div class="footer-image">
-			<img
-				class="dimo"
-				draggable="false"
-				src="../assets/roco.dimo.png"
-				alt="Roco Dimo"
-			/>
-		</div>
+		<SkillList
+			v-if="shouldShowList('skills')"
+			:search="inputSearch"
+			:feature="selectedFeature"
+			:page="paginationPage"
+			@update:sizes="updatePaginationSize"
+		/>
 		<Pagination
 			:can-jump="canJump"
 			:has-prev="hasPrev"
@@ -103,14 +119,5 @@ function pageUpdateFn(page: number) {
 <style lang="postcss" scoped>
 .filters {
 	@apply w-full inline-flex justify-evenly;
-}
-
-.footer-image {
-	@apply w-full h-px relative
-	-translate-x-2 transform select-none;
-}
-.dimo {
-	@apply w-24 absolute top-0 left-0;
-	transform: matrix(-1, 0, 0, 1, 0, 0);
 }
 </style>

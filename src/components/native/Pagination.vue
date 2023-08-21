@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/20/solid"
 import { useThrottleFn } from "@vueuse/core"
-import { Ref, ref, toRefs } from "vue"
+import { watch, Ref, ref, toRefs } from "vue"
 
 const $props = withDefaults(
 	defineProps<{
@@ -33,6 +33,10 @@ const { page, total, canJump, hasNext, hasPrev } = toRefs($props)
 const { pageUpdateFn } = $props
 const innerPage = ref(page.value)
 const bar: Ref<HTMLElement | null> = ref(null)
+
+watch(page, (value) => {
+	innerPage.value = value
+})
 
 function getDisabledClass(bool: boolean) {
 	return bool ? "disabled" : null

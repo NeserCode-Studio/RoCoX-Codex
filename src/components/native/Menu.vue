@@ -8,7 +8,7 @@ import {
 } from "@heroicons/vue/20/solid"
 import { useStorage } from "@vueuse/core"
 
-const category = useStorage("roco-categroy", "angels")
+const category = useStorage("rocox-categroy", "angels")
 function isMatchCategoryOption(key: string): boolean {
 	return category.value === key
 }
@@ -16,7 +16,7 @@ function turnToCategory(key: "angels" | "skills" | "items") {
 	category.value = key
 }
 
-const alwaysTargetNewWindow = useStorage("roco-new-window-target", false)
+const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
 function toggleTargetMode() {
 	alwaysTargetNewWindow.value = !alwaysTargetNewWindow.value
 }

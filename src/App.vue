@@ -9,7 +9,7 @@ import { nextTickToShow } from "./composables/useLocal"
 
 const isOpenModelDialog = ref(false)
 const slideDirection = useStorage(
-	"roco-navigation-transition-direction",
+	"rocox-navigation-transition-direction",
 	"slideleft"
 )
 

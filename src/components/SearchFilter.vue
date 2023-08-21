@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, inject, watch } from "vue"
+import { ref, inject, watch, computed } from "vue"
 import { UpdateSearchFunctionalKey } from "../tokens"
 import { useStorage } from "@vueuse/core"
 const innerValue = ref("")
@@ -16,7 +16,7 @@ function submitChangetoTop() {
 	searchUpdateFn(innerValue.value)
 }
 
-const category = useStorage("roco-categroy", "angels")
+const category = useStorage("rocox-categroy", "angels")
 const categoryNameMap = new Map([
 	["angels", "精灵"],
 	["skills", "技能"],
@@ -44,6 +44,9 @@ function getMatchPlaceHolder() {
 .search-filter-main {
 	@apply w-72 h-full
   transition-all;
+}
+.search-filter-main.extending {
+	@apply w-96;
 }
 
 .filter-body {

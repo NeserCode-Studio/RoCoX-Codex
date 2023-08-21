@@ -1,0 +1,162 @@
+<script lang="ts" setup>
+import GoBack from "../components/native/GoBack.vue"
+// import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
+
+import { computed, ref, watch } from "vue"
+import { computedAsync } from "@vueuse/core"
+import { useRoute } from "vue-router"
+import { useApi } from "../composables/useApi"
+
+const $route = useRoute()
+const { getSkill, damageTypeStaticMap, featureStaticURL, iconStaticURL } =
+	useApi()
+
+const skillData = computedAsync(async (onCancel) => {
+	const abortController = new AbortController()
+
+	onCancel(() => abortController.abort())
+
+	return await getSkill(
+		{ hash: $route.params.hash as string },
+		abortController.signal
+	)
+})
+
+function getPropertyIconSrc(propertyIndex: string) {
+	return `${featureStaticURL}${propertyIndex}.png`
+}
+function getAngelIconSrc(iconSrc: string) {
+	return `${iconStaticURL}${iconSrc}`
+}
+
+const isShowSkillFix = ref(false)
+const skillFix = computed(() => {
+	const answer = skillData.value.data.analysis
+	if (answer !== undefined)
+		return `解析 ${answer.hit === "空" ? `` : `· ${answer.hit}`} · ${
+			answer.analysis
+		}`
+	else return `描述 · ${skillData.value.data.description}`
+})
+function toggleSkillFix() {
+	isShowSkillFix.value = !isShowSkillFix.value
+}
+
+const isLoadingData = ref(true)
+watch(skillData, (val) => {
+	isLoadingData.value = false
+	console.log(val)
+})
+</script>
+
+<template>
+	<div v-if="!isLoadingData">
+		<span class="names">
+			<GoBack class="go-back" />
+			<img
+				class="icon property"
+				draggable="false"
+				:src="getPropertyIconSrc(skillData.data.property)"
+				alt="property icon"
+			/>
+			<img
+				v-if="skillData.data.power !== '--'"
+				class="icon damage"
+				:src="damageTypeStaticMap.get(skillData.data.damageType)"
+				:alt="skillData.data.damageType === '1' ? '物理伤害' : '魔法伤害'"
+				:title="skillData.data.damageType === '1' ? '物理伤害' : '魔法伤害'"
+			/>
+			<span class="name">{{ skillData.data.name }}</span>
+		</span>
+		<div class="details custom-scrollbar">
+			<span class="ppMax detail-item" title="pp总量"
+				>PP · {{ skillData.data.ppMax }}</span
+			>
+			<span class="power detail-item" title="威力值"
+				>威力 · {{ skillData.data.power }}</span
+			>
+			<span class="speed detail-item" title="速度值"
+				>速度 · {{ skillData.data.speed }}</span
+			>
+			<span class="description detail-item" @dblclick="toggleSkillFix">
+				{{ isShowSkillFix ? skillFix : `描述 · ${skillData.data.description}` }}
+			</span>
+			<span class="detail-item angels">
+				<span class="prefix"
+					>拥有此技能的精灵 · {{ skillData.angel.length }}</span
+				>
+				<span v-for="angel in skillData.angel" :key="angel.hash" class="angel">
+					<span class="id">#{{ angel.id }}</span> ·
+					<span class="name">{{ angel.name }}</span>
+					<img
+						class="icon"
+						:src="getAngelIconSrc(angel.iconSrc)"
+						alt="angel icon"
+					/>
+				</span>
+			</span>
+		</div>
+	</div>
+</template>
+
+<style lang="postcss" scoped>
+.names {
+	@apply relative inline-flex w-2/3 py-2 items-center justify-center mt-4
+	border-2 border-slate-400 bg-green-200 dark:border-slate-300 dark:bg-green-600
+	truncate transition-all rounded-full font-black select-none;
+}
+.names .property {
+	@apply inline-flex mx-2 items-center;
+}
+.icon.property {
+	@apply w-6 h-6 inline-block mx-1;
+}
+.icon.damage {
+	@apply absolute left-6 w-6 h-6
+	rounded overflow-hidden;
+}
+.go-back {
+	@apply left-8;
+}
+
+.details {
+	@apply w-96 max-h-96 flex items-center justify-start flex-wrap mt-8
+	select-none overflow-auto;
+}
+.detail-item {
+	@apply inline-flex items-center mb-1 mr-1 px-2 py-0.5
+	border-2 rounded whitespace-pre-line
+	border-slate-300 dark:border-slate-500
+	transition-all;
+}
+
+.description {
+	@apply text-sm font-semibold;
+}
+
+.angels {
+	@apply flex-wrap;
+}
+.angels .prefix {
+	@apply inline-block w-full mb-0.5;
+}
+.angel {
+	@apply relative inline-block mb-1 mr-1 px-1 py-0.5 pr-7
+	border-2 rounded
+	border-green-600 dark:border-green-300 bg-slate-200 dark:bg-slate-600
+	text-sm font-bold transition-all;
+}
+.angel .icon {
+	@apply absolute right-0 top-0 inline-block w-6 h-6;
+}
+
+.detail-item.ppMax {
+	@apply text-blue-700 dark:text-blue-400 border-blue-700 dark:border-blue-400 font-bold;
+}
+.detail-item.power {
+	@apply text-red-700 dark:text-red-400 border-red-700 dark:border-red-400 font-bold;
+}
+.detail-item.speed {
+	@apply text-sky-700 dark:text-sky-400 border-sky-700 dark:border-sky-400 font-bold;
+}
+</style>

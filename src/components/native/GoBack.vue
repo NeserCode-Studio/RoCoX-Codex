@@ -3,12 +3,12 @@ import { ArrowLeftIcon } from "@heroicons/vue/20/solid"
 import { useStorage, useThrottleFn } from "@vueuse/core"
 import { useRouter } from "vue-router"
 
-const alwaysTargetNewWindow = useStorage("roco-new-window-target", false)
+const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
 
 const $router = useRouter()
 const goPrevHistory = useThrottleFn(() => {
 	$router.back()
-}, 100)
+}, 300)
 </script>
 
 <template>

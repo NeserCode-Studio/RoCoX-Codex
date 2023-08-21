@@ -25,6 +25,17 @@ const headers = {
 }
 const iconStaticURL = "https://res.17roco.qq.com/res/combat/icons/"
 const featureStaticURL = "https://res.17roco.qq.com/res/combat/property/"
+const damageTypeStaticMap = new Map([
+	[
+		"1",
+		"https://article.biliimg.com/bfs/article/b9b3acebd1c20ded6c492bffbcb2830d23f93354.png",
+	],
+	[
+		"2",
+		"https://article.biliimg.com/bfs/article/39592399aa510f3a3d94b9a5e683089b2f8f8528.png",
+	],
+])
+const talentStaticURL = "https://res.17roco.qq.com/res/talent/"
 const rocoApi = axios.create({
 	baseURL,
 	headers,
@@ -37,6 +48,13 @@ interface FeatureObject {
 }
 
 interface AngelListParma {
+	search: string
+	id: string
+	feature: string
+	page: number
+}
+
+interface SkillListParma {
 	search: string
 	id: string
 	feature: string
@@ -123,7 +141,7 @@ export const useApi = () => {
 
 	// Angel Skill List
 	async function getSkillList(
-		params: AngelListParma = {
+		params: SkillListParma = {
 			search: "",
 			id: "",
 			feature: "",
@@ -134,17 +152,25 @@ export const useApi = () => {
 		const response = await rocoApi.post("/Skilllist/", params, { signal })
 		return response.data.data
 	}
+	// Skill Detail
+	async function getSkill(params: { hash: string }, signal?: Signal) {
+		const response = await rocoApi.post("/detail/skill/", params, { signal })
+		return response.data
+	}
 
 	return {
 		getFeatures,
 		getAngelList,
 		getAngel,
-		getItemList,
 		getSkillList,
+		getSkill,
+		getItemList,
 		baseURL,
 		headers,
 		timeout,
 		iconStaticURL,
 		featureStaticURL,
+		talentStaticURL,
+		damageTypeStaticMap,
 	}
 }

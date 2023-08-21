@@ -9,7 +9,7 @@ import { useRoute } from "vue-router"
 import { useApi } from "../composables/useApi"
 
 const $route = useRoute()
-const { getAngel, iconStaticURL, featureStaticURL } = useApi()
+const { getAngel, iconStaticURL, featureStaticURL, talentStaticURL } = useApi()
 
 const angelData = computedAsync(async (onCancel) => {
 	const abortController = new AbortController()
@@ -28,6 +28,9 @@ function getIconSrc() {
 function getFeatureIconSrc(featureIndex: string) {
 	return `${featureStaticURL}${featureIndex}.png`
 }
+function getTalentIconSrc(talentId: string) {
+	return `${talentStaticURL}${talentId}_big.png`
+}
 
 function getSelectedTabClass(selectedIndex: number, index: number) {
 	return selectedIndex === index ? "selected" : null
@@ -38,6 +41,11 @@ watch(angelData, (val) => {
 	isLoadingData.value = false
 	console.log(val)
 })
+
+const isShowTalentFix = ref(false)
+function toggleTalentFix() {
+	isShowTalentFix.value = !isShowTalentFix.value
+}
 
 function log() {
 	console.log(angelData.value)
@@ -157,6 +165,11 @@ function log() {
 						v-if="angelData.skills"
 						>技能 {{ Object.keys(angelData.skills).length }}</Tab
 					>
+					<Tab
+						:class="['tab', getSelectedTabClass(selectedIndex, 2)]"
+						v-if="angelData.xm.length"
+						>血脉 {{ Object.keys(angelData.xm).length }}</Tab
+					>
 				</TabList>
 				<TabPanels class="tab-panels">
 					<TabPanel class="tab-panel info">
@@ -206,6 +219,30 @@ function log() {
 									<span class="pp">{{ skill.ppMax }}</span> ·
 									<span class="power">{{ skill.power }}</span>
 								</span>
+							</span>
+						</div>
+					</TabPanel>
+					<TabPanel class="tab-panel talent">
+						<div class="talent-main custom-scrollbar">
+							<span
+								v-for="talent in angelData.xm"
+								class="talent-item"
+								:key="talent.id"
+								@dblclick="toggleTalentFix"
+							>
+								<span class="talent-details">
+									<img
+										class="talent icon"
+										:src="getTalentIconSrc(talent.id)"
+										alt="talent icon"
+									/>
+									<span class="id">#{{ talent.id }}</span>
+									<span class="inline-block mx-1">·</span>
+									<span class="name">{{ talent.config.name }}</span>
+								</span>
+								<span class="description">{{
+									isShowTalentFix ? talent.xmjx : talent.config.des
+								}}</span>
 							</span>
 						</div>
 					</TabPanel>
@@ -289,16 +326,18 @@ function log() {
 }
 
 .info-main,
-.skill-main {
-	@apply max-h-48 flex flex-wrap justify-center
-	overflow-auto;
+.skill-main,
+.talent-main {
+	@apply max-h-48 w-full flex flex-wrap justify-center
+	transition-all overflow-auto;
 }
 .info-item,
-.skill-item {
+.skill-item,
+.talent-item {
 	@apply w-fit inline-flex items-center justify-center my-0.5 px-1 py-0.5 mx-0.5
 	border border-slate-400 dark:border-slate-400
 	bg-slate-200 dark:bg-slate-600
-	rounded text-sm font-semibold;
+	transition-all rounded text-sm font-semibold;
 }
 
 .skill-item .icon {
@@ -321,5 +360,20 @@ function log() {
 .skill-details .power {
 	@apply text-red-500 dark:text-red-300
 	transition-all;
+}
+
+.talent-item {
+	@apply flex-col items-start;
+}
+.talent-details {
+	@apply inline-flex items-center
+	text-base;
+}
+.talent-details .icon {
+	@apply inline-block w-8 h-8 m-1;
+}
+.talent-item .description {
+	@apply text-gray-500 dark:text-gray-300
+	transition-all whitespace-pre-wrap;
 }
 </style>

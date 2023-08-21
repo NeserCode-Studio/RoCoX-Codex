@@ -1,7 +1,7 @@
 [package]
-name = "roco-codex"
+name = "rocox-codex"
 version = "1.0.0-beta.1"
-description = "Roco Codex"
+description = "Rocox Codex"
 authors = ["NeserCode"]
 license = "MIT"
 repository = ""
