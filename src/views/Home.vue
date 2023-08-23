@@ -5,6 +5,7 @@ import SearchFilter from "../components/SearchFilter.vue"
 import FeatureFilter from "../components/FeatureFilter.vue"
 import SpiritList from "../components/SpiritList.vue"
 import SkillList from "../components/SkillList.vue"
+import ItemList from "../components/ItemList.vue"
 import Pagination from "../components/native/Pagination.vue"
 
 import {
@@ -101,6 +102,12 @@ function pageUpdateFn(page: number) {
 			v-if="shouldShowList('skills')"
 			:search="inputSearch"
 			:feature="selectedFeature"
+			:page="paginationPage"
+			@update:sizes="updatePaginationSize"
+		/>
+		<ItemList
+			v-if="shouldShowList('items')"
+			:search="inputSearch"
 			:page="paginationPage"
 			@update:sizes="updatePaginationSize"
 		/>

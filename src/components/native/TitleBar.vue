@@ -14,7 +14,6 @@ import { appWindow } from "@tauri-apps/api/window"
 
 import { useDarkMode } from "../../composables/useDarkMode"
 import { register, unregisterAll } from "@tauri-apps/api/globalShortcut"
-import { app } from "@tauri-apps/api"
 
 const $props = withDefaults(
 	defineProps<{
@@ -29,7 +28,6 @@ const $route = useRoute()
 const $router = useRouter()
 
 const title = ref("Rocox Codex")
-const titleStack = useStorage<string[]>("rocox-title-stack", [])
 const isAlwaysonTop = useStorage("rocox-always-on-top", false)
 const category = useStorage("rocox-category", "angels")
 const categoryNameMap = new Map([
@@ -46,6 +44,7 @@ function updateTitle() {
 	if (!!$route.meta.titleStorageKey)
 		title.value =
 			routeNameMap.get($route.name as string)! +
+			" · " +
 			localStorage.getItem($route.meta.titleStorageKey as string)!
 	else
 		title.value =
@@ -76,7 +75,6 @@ function getIspinnedClass() {
 // Initial top
 onMounted(async () => {
 	await appWindow.setAlwaysOnTop(isAlwaysonTop.value)
-	titleStack.value = []
 })
 
 async function toggleIspinned() {

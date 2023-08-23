@@ -24,6 +24,7 @@ const headers = {
 	// 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188",
 }
 const iconStaticURL = "https://res.17roco.qq.com/res/combat/icons/"
+const itemStaticURL = "https://res.17roco.qq.com/res/item/"
 const featureStaticURL = "https://res.17roco.qq.com/res/combat/property/"
 const damageTypeStaticMap = new Map([
 	[
@@ -171,6 +172,7 @@ export const useApi = () => {
 		headers,
 		timeout,
 		iconStaticURL,
+		itemStaticURL,
 		featureStaticURL,
 		talentStaticURL,
 		damageTypeStaticMap,

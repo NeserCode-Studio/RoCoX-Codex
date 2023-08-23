@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import GoBack from "../components/native/GoBack.vue"
+import ChainItem from "../components/ChainItem.vue"
 import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue"
 
@@ -37,10 +38,14 @@ function getSelectedTabClass(selectedIndex: number, index: number) {
 	return selectedIndex === index ? "selected" : null
 }
 
+const angelIconHashMap = useStorage("rocox-angel-icon-hash-map", new Map())
+
 const isLoadingData = ref(true)
 watch(angelData, (val) => {
 	isLoadingData.value = false
-	// console.log(val)
+	// Storage icon hash
+	angelIconHashMap.value.set(angelData.value.angel.hash, getIconSrc())
+	console.log(val)
 })
 
 const isShowTalentFix = ref(false)
@@ -187,13 +192,21 @@ function goSkillView(hash: string) {
 					>
 					<Tab
 						:class="['tab', getSelectedTabClass(selectedIndex, 2)]"
-						v-if="angelData.xm.length"
+						v-show="angelData.xm.length"
 						>血脉 {{ Object.keys(angelData.xm).length }}</Tab
+					>
+					<Tab
+						:class="['tab', getSelectedTabClass(selectedIndex, 3)]"
+						v-show="!!angelData.angel.chain"
+						>进化</Tab
 					>
 				</TabList>
 				<TabPanels class="tab-panels">
 					<TabPanel class="tab-panel info">
 						<div class="info-main custom-scrollbar">
+							<span class="info-item getForm"
+								>获取 · {{ angelData.angel.getForm }}</span
+							>
 							<span class="info-item hight"
 								>身高 · {{ angelData.angel.height }}</span
 							>
@@ -221,7 +234,7 @@ function goSkillView(hash: string) {
 							>
 						</div>
 					</TabPanel>
-					<TabPanel class="tab-panel skill">
+					<TabPanel class="tab-panel skill" v-show="angelData.skills">
 						<div class="skill-main custom-scrollbar">
 							<span
 								v-for="skill of angelData.skills"
@@ -243,7 +256,7 @@ function goSkillView(hash: string) {
 							</span>
 						</div>
 					</TabPanel>
-					<TabPanel class="tab-panel talent">
+					<TabPanel class="tab-panel talent" v-show="angelData.xm.length">
 						<div class="talent-main custom-scrollbar">
 							<span
 								v-for="talent in angelData.xm"
@@ -265,6 +278,11 @@ function goSkillView(hash: string) {
 									isShowTalentFix ? talent.xmjx : talent.config.des
 								}}</span>
 							</span>
+						</div>
+					</TabPanel>
+					<TabPanel class="tab-panel chain" v-show="angelData.angel.chain">
+						<div class="chain-main custom-scrollbar">
+							<ChainItem :chain-to="angelData.angel.chain" />
 						</div>
 					</TabPanel>
 				</TabPanels>
@@ -297,7 +315,7 @@ function goSkillView(hash: string) {
 }
 .tab-panel {
 	@apply w-96 inline-flex
-	rounded overflow-hidden transition-all;
+	rounded overflow-hidden outline-none transition-all;
 }
 </style>
 <style lang="postcss" scoped>
@@ -322,7 +340,8 @@ function goSkillView(hash: string) {
 }
 
 .angel-img {
-	@apply w-48 my-4;
+	@apply w-48 my-4
+	rounded overflow-hidden;
 }
 .angel-img.icon {
 	@apply p-8;
@@ -348,9 +367,10 @@ function goSkillView(hash: string) {
 
 .info-main,
 .skill-main,
-.talent-main {
+.talent-main,
+.chain-main {
 	@apply max-h-48 w-full flex flex-wrap justify-center
-	transition-all overflow-auto;
+	transition-all overflow-auto snap-y snap-mandatory;
 }
 .info-item,
 .skill-item,
@@ -358,7 +378,7 @@ function goSkillView(hash: string) {
 	@apply w-fit inline-flex items-center justify-center my-0.5 px-1 py-0.5 mx-0.5
 	border border-slate-400 dark:border-slate-300
 	bg-slate-100 dark:bg-slate-600
-	transition-all rounded text-sm font-semibold;
+	transition-all rounded text-sm font-semibold snap-start;
 }
 
 .skill-item {
