@@ -14,13 +14,13 @@ const hasActivedLink = computed(() => {
 	)
 })
 
-const category = useStorage("rocox-categroy", "angels")
+const category = useStorage("rocox-category", "angels")
 const categoryNameMap = new Map([
 	["angels", "精灵"],
 	["skills", "技能"],
 	["items", "物品"],
 ])
-function getMatchCategroyName() {
+function getMatchCategoryName() {
 	return categoryNameMap.get(category.value)
 }
 </script>
@@ -32,7 +32,7 @@ function getMatchCategroyName() {
 			<GoBack />
 			<RouterLink draggable="false" class="link" to="/">
 				<BookOpenIcon class="icon" />
-				<span class="text">{{ getMatchCategroyName() }}</span>
+				<span class="text">{{ getMatchCategoryName() }}</span>
 			</RouterLink>
 			<RouterLink draggable="false" class="link" to="/about">
 				<QuestionMarkCircleIcon class="icon" />

@@ -36,6 +36,7 @@ const damageTypeStaticMap = new Map([
 	],
 ])
 const talentStaticURL = "https://res.17roco.qq.com/res/talent/"
+
 const rocoApi = axios.create({
 	baseURL,
 	headers,
@@ -152,6 +153,7 @@ export const useApi = () => {
 		const response = await rocoApi.post("/Skilllist/", params, { signal })
 		return response.data.data
 	}
+
 	// Skill Detail
 	async function getSkill(params: { hash: string }, signal?: Signal) {
 		const response = await rocoApi.post("/detail/skill/", params, { signal })

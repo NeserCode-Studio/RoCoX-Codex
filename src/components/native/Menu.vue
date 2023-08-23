@@ -8,7 +8,7 @@ import {
 } from "@heroicons/vue/20/solid"
 import { useStorage } from "@vueuse/core"
 
-const category = useStorage("rocox-categroy", "angels")
+const category = useStorage("rocox-category", "angels")
 function isMatchCategoryOption(key: string): boolean {
 	return category.value === key
 }

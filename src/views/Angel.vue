@@ -3,10 +3,11 @@ import GoBack from "../components/native/GoBack.vue"
 import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue"
 
-import { ref, watch } from "vue"
-import { computedAsync } from "@vueuse/core"
-import { useRoute } from "vue-router"
+import { Ref, ref, watch } from "vue"
+import { computedAsync, useStorage } from "@vueuse/core"
+import { useRoute, useRouter } from "vue-router"
 import { useApi } from "../composables/useApi"
+import { WindowCreator } from "../composables/useWindow"
 
 const $route = useRoute()
 const { getAngel, iconStaticURL, featureStaticURL, talentStaticURL } = useApi()
@@ -39,7 +40,7 @@ function getSelectedTabClass(selectedIndex: number, index: number) {
 const isLoadingData = ref(true)
 watch(angelData, (val) => {
 	isLoadingData.value = false
-	console.log(val)
+	// console.log(val)
 })
 
 const isShowTalentFix = ref(false)
@@ -47,13 +48,32 @@ function toggleTalentFix() {
 	isShowTalentFix.value = !isShowTalentFix.value
 }
 
-function log() {
-	console.log(angelData.value)
+const $router = useRouter()
+const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
+const skillPageTitle = useStorage("rocox-skill-page-title", "")
+const SkillWindow: Ref<WindowCreator | null> = ref(null)
+
+function setupWindowParams(id: string, name: string, hash: string) {
+	skillPageTitle.value = `#${id} ${name}`
+	SkillWindow.value = new WindowCreator(id, {
+		url: `/#/skill/${hash}`,
+		title: skillPageTitle.value,
+	})
+
+	goSkillView(hash)
+}
+function goSkillView(hash: string) {
+	if (alwaysTargetNewWindow.value) SkillWindow.value!.setup()
+	else
+		$router.push({
+			name: "Skill",
+			params: { hash },
+		})
 }
 </script>
 
 <template>
-	<div @click="log" v-if="!isLoadingData">
+	<div v-if="!isLoadingData">
 		<span class="names">
 			<GoBack class="go-back" />
 			<span class="features">
@@ -207,6 +227,7 @@ function log() {
 								v-for="skill of angelData.skills"
 								class="skill-item"
 								:key="skill.id"
+								@click="setupWindowParams(skill.id, skill.name, skill.hash)"
 							>
 								<span class="id">#{{ skill.id }}</span>
 								<span class="name">{{ skill.name }}</span>
@@ -335,9 +356,15 @@ function log() {
 .skill-item,
 .talent-item {
 	@apply w-fit inline-flex items-center justify-center my-0.5 px-1 py-0.5 mx-0.5
-	border border-slate-400 dark:border-slate-400
-	bg-slate-200 dark:bg-slate-600
+	border border-slate-400 dark:border-slate-300
+	bg-slate-100 dark:bg-slate-600
 	transition-all rounded text-sm font-semibold;
+}
+
+.skill-item {
+	@apply hover:bg-slate-200 dark:hover:bg-slate-500
+	active:bg-slate-300 dark:active:bg-slate-400
+	cursor-pointer;
 }
 
 .skill-item .icon {

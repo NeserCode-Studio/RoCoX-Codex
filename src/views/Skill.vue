@@ -2,10 +2,11 @@
 import GoBack from "../components/native/GoBack.vue"
 // import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 
-import { computed, ref, watch } from "vue"
-import { computedAsync } from "@vueuse/core"
-import { useRoute } from "vue-router"
+import { Ref, computed, ref, watch } from "vue"
+import { computedAsync, useStorage } from "@vueuse/core"
+import { useRoute, useRouter } from "vue-router"
 import { useApi } from "../composables/useApi"
+import { WindowCreator } from "../composables/useWindow"
 
 const $route = useRoute()
 const { getSkill, damageTypeStaticMap, featureStaticURL, iconStaticURL } =
@@ -45,8 +46,32 @@ function toggleSkillFix() {
 const isLoadingData = ref(true)
 watch(skillData, (val) => {
 	isLoadingData.value = false
-	console.log(val)
+	// console.log(val)
 })
+
+const $router = useRouter()
+const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
+const angelPageTitle = useStorage("rocox-angel-page-title", "")
+const AngelWindow: Ref<WindowCreator | null> = ref(null)
+
+function setupWindowParams(id: string, name: string, hash: string) {
+	angelPageTitle.value = `#${id} ${name}`
+	AngelWindow.value = new WindowCreator(id, {
+		url: `/#/angel/${hash}`,
+		title: angelPageTitle.value,
+	})
+
+	goAngelView(hash)
+}
+function goAngelView(hash: string) {
+	if (!hash) return false
+	if (alwaysTargetNewWindow.value) AngelWindow.value!.setup()
+	else
+		$router.push({
+			name: "Angel",
+			params: { hash },
+		})
+}
 </script>
 
 <template>
@@ -85,7 +110,12 @@ watch(skillData, (val) => {
 				<span class="prefix"
 					>拥有此技能的精灵 · {{ skillData.angel.length }}</span
 				>
-				<span v-for="angel in skillData.angel" :key="angel.hash" class="angel">
+				<span
+					v-for="angel in skillData.angel"
+					:key="angel.hash"
+					class="angel"
+					@click="setupWindowParams(angel.id, angel.name, angel.hash)"
+				>
 					<span class="id">#{{ angel.id }}</span> ·
 					<span class="name">{{ angel.name }}</span>
 					<img
@@ -144,7 +174,9 @@ watch(skillData, (val) => {
 	@apply relative inline-block mb-1 mr-1 px-1 py-0.5 pr-7
 	border-2 rounded
 	border-green-600 dark:border-green-300 bg-slate-200 dark:bg-slate-600
-	text-sm font-bold transition-all;
+	hover:bg-slate-200 dark:hover:bg-slate-500
+	active:bg-slate-300 dark:active:bg-slate-400
+	cursor-pointer text-sm font-bold transition-all;
 }
 .angel .icon {
 	@apply absolute right-0 top-0 inline-block w-6 h-6;

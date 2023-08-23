@@ -3,9 +3,10 @@ import TitleBar from "./components/native/TitleBar.vue"
 import Dialog from "./components/Dialog.vue"
 import TopLinks from "./components/TopLinks.vue"
 
-import { ref, onMounted } from "vue"
+import { ref, onMounted, provide } from "vue"
 import { useStorage } from "@vueuse/core"
 import { nextTickToShow } from "./composables/useLocal"
+import { UpdateTitleFunctionalKey } from "./tokens"
 
 const isOpenModelDialog = ref(false)
 const slideDirection = useStorage(
@@ -18,11 +19,17 @@ onMounted(() => {
 		nextTickToShow()
 	}, 0)
 })
+
+const title = ref("RocoKindom Codex")
+function titleUpdateFn(change: string) {
+	title.value = change
+}
+provide(UpdateTitleFunctionalKey, { titleUpdateFn })
 </script>
 
 <template>
 	<div id="app-main">
-		<TitleBar />
+		<TitleBar :titleText="title" />
 		<Dialog v-model:isOpen="isOpenModelDialog" />
 		<TopLinks />
 

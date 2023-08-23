@@ -6,20 +6,75 @@ import {
 	MoonIcon,
 	PaperClipIcon,
 } from "@heroicons/vue/20/solid"
-import { ref, onMounted } from "vue"
+import { ref, onMounted, onBeforeUnmount, toRefs, watch } from "vue"
+import { useRoute } from "vue-router"
 import { useStorage, useThrottleFn } from "@vueuse/core"
+
 import { appWindow } from "@tauri-apps/api/window"
+
 import { useDarkMode } from "../../composables/useDarkMode"
+import { register, unregisterAll } from "@tauri-apps/api/globalShortcut"
+
+const $props = withDefaults(
+	defineProps<{
+		titleText?: string
+	}>(),
+	{
+		titleText: "Rocox Codex",
+	}
+)
+const { titleText } = toRefs($props)
+const $route = useRoute()
 
 const title = ref("Rocox Codex")
+const titleStack = useStorage<string[]>("rocox-title-stack", [])
 const isAlwaysonTop = useStorage("rocox-always-on-top", false)
+const category = useStorage("rocox-category", "angels")
+const categoryNameMap = new Map([
+	["angels", "精灵"],
+	["skills", "技能"],
+	["items", "物品"],
+])
+const routeNameMap = new Map([
+	["Angel", "精灵"],
+	["Skill", "技能"],
+])
+
+function updateTitle() {
+	if (!!$route.meta.titleStorageKey)
+		title.value =
+			routeNameMap.get($route.name as string)! +
+			localStorage.getItem($route.meta.titleStorageKey as string)!
+	else
+		title.value =
+			$route.name === "Home" ? categoryNameMap.get(category.value)! : "关于"
+}
+
+watch(
+	titleText,
+	(value) => {
+		title.value = value
+	},
+	{
+		immediate: true,
+	}
+)
+
+watch($route, (_route) => {
+	updateTitle()
+})
+watch(category, (_route) => {
+	updateTitle()
+})
 
 function getIspinnedClass() {
 	return isAlwaysonTop.value ? "pinned" : null
 }
+
 // Initial top
 onMounted(async () => {
 	await appWindow.setAlwaysOnTop(isAlwaysonTop.value)
+	titleStack.value = []
 })
 
 async function toggleIspinned() {
@@ -50,6 +105,16 @@ function removeMoveClass(event: MouseEvent) {
 }
 
 const { isDarkMode, toggleDarkMode } = useDarkMode()
+
+onMounted(async () => {
+	await unregisterAll()
+	await register("CommandOrControl+D", () => {
+		toggleDarkMode()
+	})
+	await register("CommandOrControl+P", () => {
+		throttleToggleIspinned()
+	})
+})
 </script>
 
 <template>
@@ -58,7 +123,7 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
 			<!-- <span class="icon" data-tauri-drag-region>
 				<img src="../../assets/hf.jpg" alt="!@" />
 			</span> -->
-			<span data-tauri-drag-region>{{ title }}</span>
+			<span data-tauri-drag-region>{{ title }} · RoCoX Codex</span>
 		</span>
 		<div class="buttons" data-tauri-drag-region>
 			<span
@@ -108,7 +173,8 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
 }
 
 .title {
-	@apply absolute inline-flex items-center top-1/2 left-2 text-sm
+	@apply absolute inline-flex items-center top-1/2 left-2
+	text-sm font-bold
 	-translate-y-1/2;
 }
 

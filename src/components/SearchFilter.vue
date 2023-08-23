@@ -16,7 +16,7 @@ function submitChangetoTop() {
 	searchUpdateFn(innerValue.value)
 }
 
-const category = useStorage("rocox-categroy", "angels")
+const category = useStorage("rocox-category", "angels")
 const categoryNameMap = new Map([
 	["angels", "精灵"],
 	["skills", "技能"],

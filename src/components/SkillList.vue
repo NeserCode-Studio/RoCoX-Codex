@@ -64,19 +64,19 @@ watch(listData, (val: any[]) => {
 const $router = useRouter()
 const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
 const skillPageTitle = useStorage("rocox-skill-page-title", "")
-const AngelWindow: Ref<WindowCreator | null> = ref(null)
+const SkillWindow: Ref<WindowCreator | null> = ref(null)
 
 function setupWindowParams(id: string, name: string, hash: string) {
 	skillPageTitle.value = `#${id} ${name}`
-	AngelWindow.value = new WindowCreator(id, {
+	SkillWindow.value = new WindowCreator(id, {
 		url: `/#/skill/${hash}`,
 		title: skillPageTitle.value,
 	})
 
-	goAngelView(hash)
+	goSkillView(hash)
 }
-function goAngelView(hash: string) {
-	if (alwaysTargetNewWindow.value) AngelWindow.value!.setup()
+function goSkillView(hash: string) {
+	if (alwaysTargetNewWindow.value) SkillWindow.value!.setup()
 	else
 		$router.push({
 			name: "Skill",

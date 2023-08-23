@@ -70,7 +70,7 @@ onActivated(async () => {
 		<span class="api-provide">
 			API -
 			<a draggable="false" target="_blank" href="https://rocotime.com/"
-				>洛克时光团队-RocoTime</a
+				>洛克时光团队 RocoTime</a
 			>
 		</span>
 		<span class="res-provide">
@@ -141,7 +141,8 @@ img {
 }
 
 .avatar-container {
-	@apply w-full flex flex-col justify-center items-center mt-4;
+	@apply w-full flex flex-col justify-center items-center mt-4
+	font-semibold;
 }
 
 .avatar {
@@ -159,7 +160,7 @@ img {
 
 .api-provide,
 .res-provide {
-	@apply text-sm;
+	@apply text-sm font-semibold;
 }
 
 .separate {
@@ -175,8 +176,9 @@ img {
 }
 
 .versions {
-	@apply inline-flex flex-col items-center justify-center
-	font-black text-xs;
+	@apply inline-flex flex-col items-center justify-center px-2 py-1
+	rounded bg-green-200 dark:bg-green-700
+	font-mono text-xs transition-all;
 }
 
 .warn-massage,

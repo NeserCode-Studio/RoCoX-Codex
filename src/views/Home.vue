@@ -15,7 +15,7 @@ const slideDirection = useStorage(
 	"rocox-navigation-transition-direction",
 	"slideleft"
 )
-const category = useStorage("rocox-categroy", "angels")
+const category = useStorage("rocox-category", "angels")
 const computedExtendingClass = computed(() => {
 	return ["angels", "skills"].includes(category.value) ? null : "extending"
 })
