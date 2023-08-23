@@ -5,6 +5,8 @@ import {
 	ArrowsRightLeftIcon,
 	ArrowTopRightOnSquareIcon,
 	HomeModernIcon,
+	LockClosedIcon,
+	LockOpenIcon,
 } from "@heroicons/vue/20/solid"
 import { useStorage } from "@vueuse/core"
 
@@ -19,6 +21,11 @@ function turnToCategory(key: "angels" | "skills" | "items") {
 const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
 function toggleTargetMode() {
 	alwaysTargetNewWindow.value = !alwaysTargetNewWindow.value
+}
+
+const alwaysUseFocusShortcut = useStorage("rocox-shortcut-use-focus", true)
+function toggleUseFocusShortcut() {
+	alwaysUseFocusShortcut.value = !alwaysUseFocusShortcut.value
 }
 </script>
 
@@ -116,6 +123,28 @@ function toggleTargetMode() {
 							}}</span
 						>
 					</MenuItem>
+					<MenuItem
+						as="div"
+						class="menu-item"
+						v-slot="{ disabled, active }"
+						@click="toggleUseFocusShortcut()"
+					>
+						<LockOpenIcon v-show="alwaysUseFocusShortcut" class="icon" />
+						<LockClosedIcon v-show="!alwaysUseFocusShortcut" class="icon" />
+						<span
+							:class="[
+								'text',
+								disabled ? 'disabled' : null,
+								active ? 'active' : null,
+							]"
+							title="切换快捷键模式"
+							>{{
+								alwaysUseFocusShortcut
+									? "全局启用使用快捷键"
+									: "总在应用内使用快捷键"
+							}}</span
+						>
+					</MenuItem>
 				</MenuItems>
 			</transition>
 		</Menu>
@@ -138,7 +167,7 @@ function toggleTargetMode() {
 }
 
 .menu-items {
-	@apply absolute left-0 top-full flex flex-col w-40 mt-2 p-1
+	@apply absolute left-0 top-full flex flex-col w-fit max-w-xs mt-2 p-1
 	border-2 rounded border-slate-300 dark:border-slate-500
 	focus:ring-2 ring-green-300 dark:ring-green-500
 	bg-sky-50 dark:bg-sky-900
@@ -153,7 +182,7 @@ function toggleTargetMode() {
 	@apply w-4 h-4 mr-1;
 }
 .menu-item .text {
-	@apply inline-block max-w-[6.75rem] text-sm
+	@apply inline-block w-full text-sm
 	truncate font-bold;
 }
 

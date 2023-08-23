@@ -6,14 +6,15 @@ import {
 	MoonIcon,
 	PaperClipIcon,
 } from "@heroicons/vue/20/solid"
-import { ref, onMounted, onBeforeUnmount, toRefs, watch } from "vue"
-import { useRoute } from "vue-router"
+import { ref, onMounted, toRefs, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 import { useStorage, useThrottleFn } from "@vueuse/core"
 
 import { appWindow } from "@tauri-apps/api/window"
 
 import { useDarkMode } from "../../composables/useDarkMode"
 import { register, unregisterAll } from "@tauri-apps/api/globalShortcut"
+import { app } from "@tauri-apps/api"
 
 const $props = withDefaults(
 	defineProps<{
@@ -25,6 +26,7 @@ const $props = withDefaults(
 )
 const { titleText } = toRefs($props)
 const $route = useRoute()
+const $router = useRouter()
 
 const title = ref("Rocox Codex")
 const titleStack = useStorage<string[]>("rocox-title-stack", [])
@@ -105,14 +107,24 @@ function removeMoveClass(event: MouseEvent) {
 }
 
 const { isDarkMode, toggleDarkMode } = useDarkMode()
+const alwaysUseFocusShortcut = useStorage("rocox-shortcut-use-focus", true)
 
 onMounted(async () => {
 	await unregisterAll()
-	await register("CommandOrControl+D", () => {
-		toggleDarkMode()
+	await register("CommandOrControl+D", async () => {
+		if (alwaysUseFocusShortcut.value) {
+			if (await appWindow.isFocused()) toggleDarkMode()
+		} else toggleDarkMode()
 	})
-	await register("CommandOrControl+P", () => {
-		throttleToggleIspinned()
+	await register("CommandOrControl+P", async () => {
+		if (alwaysUseFocusShortcut.value) {
+			if (await appWindow.isFocused()) throttleToggleIspinned()
+		} else throttleToggleIspinned()
+	})
+	await register("CommandOrControl+Q", async () => {
+		if (alwaysUseFocusShortcut.value) {
+			if (await appWindow.isFocused()) $router.go(0)
+		} else $router.go(0)
 	})
 })
 </script>
