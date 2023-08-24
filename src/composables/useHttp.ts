@@ -1,4 +1,4 @@
-import { fetch, Body } from "@tauri-apps/api/http"
+import { fetch, Body, ResponseType } from "@tauri-apps/api/http"
 import type { FetchOptions } from "@tauri-apps/api/http"
 
 interface RequestHeaders {
@@ -53,17 +53,18 @@ export class RocoRequest {
 		this.$Option = { ...this.$Option, timeout }
 	}
 
-	async get(path: string, params?: any) {
+	async get<T>(path: string, params?: any) {
 		let reqUrl = this.$uri + path
 		// Request Interception
 		this.$interceptors.request()
 		console.log("HTTP ST GET - ", reqUrl)
 		// Request
-		const response = await fetch(reqUrl, {
+		const response = await fetch<T>(reqUrl, {
 			...this.$Option,
 			method: "GET",
 			headers: this.$headers,
 			query: { ...params },
+			responseType: ResponseType.JSON,
 		})
 		console.log("HTTP RC GET - ", response)
 
@@ -73,17 +74,18 @@ export class RocoRequest {
 		return response
 	}
 
-	async post(path: string, params: {} = {}) {
+	async post<T>(path: string, params = {}) {
 		let reqUrl = this.$uri + path
 		// Request Interception
 		this.$interceptors.request()
 		console.log("HTTP ST POST - ", reqUrl)
 		// Request
-		const response = await fetch(reqUrl, {
+		const response = await fetch<T>(reqUrl, {
 			...this.$Option,
 			method: "POST",
 			headers: this.$headers,
 			body: Body.json({ ...params }),
+			responseType: ResponseType.JSON,
 		})
 		console.log("HTTP RC POST - ", response)
 

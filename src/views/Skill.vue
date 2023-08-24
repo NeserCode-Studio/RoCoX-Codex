@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// @ts-ignore
 import GoBack from "../components/native/GoBack.vue"
 // import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 

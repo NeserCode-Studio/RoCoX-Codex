@@ -35,14 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-	<div
-		id="app-main"
-		@contextmenu="
-			(e) => {
-				// e.preventDefault()
-			}
-		"
-	>
+	<div id="app-main" @contextmenu.prevent>
 		<TitleBar :titleText="title" />
 		<Dialog v-model:isOpen="isOpenModelDialog" />
 		<TopLinks />

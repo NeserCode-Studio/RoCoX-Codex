@@ -1,3 +1,4 @@
+// @ts-ignore
 import { RocoRequest } from "./useHttp"
 import NProgress from "nprogress"
 
@@ -48,6 +49,15 @@ interface FeatureObject {
 	name: string
 }
 
+interface AngelListItemObject {
+	id: string
+	group: string
+	hash: string
+	img?: string
+	iconSrc: string
+	features: string[]
+}
+
 interface AngelListParma {
 	search: string
 	id: string
@@ -84,7 +94,10 @@ rocoApi.setInterceptors("response")(() => {
 export const useApi = () => {
 	// Angel Feature Map
 	async function getFeatures() {
-		const response = await rocoApi.get("/feature/")
+		const response = await rocoApi.get<{ list: FeatureObject[] }>(
+			"/feature/",
+			{}
+		)
 
 		const obj: FeatureObject[] = response.data.list
 		const map = new Map()
@@ -103,7 +116,11 @@ export const useApi = () => {
 			page: 1,
 		}
 	) {
-		const response = await rocoApi.post("/spiritList/", params)
+		const response = await rocoApi.post<{ data: AngelListItemObject[] }>(
+			"/spiritList/",
+			params
+		)
+
 		return response.data.data
 	}
 
