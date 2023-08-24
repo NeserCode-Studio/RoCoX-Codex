@@ -55,7 +55,8 @@ function getMatchPlaceHolder() {
   border-2 border-gray-300 dark:border-gray-500 caret-slate-400
   bg-slate-100 dark:bg-slate-600
   focus:ring-2 focus:border-green-300 dark:focus:border-green-500 ring-green-300 dark:ring-green-500
-  outline-none shadow-lg transition-all rounded;
+  outline-none shadow-lg transition-all rounded
+	selection:bg-green-400 selection:dark:bg-green-600;
 }
 .filter-body::placeholder {
 	@apply select-none transition-all;

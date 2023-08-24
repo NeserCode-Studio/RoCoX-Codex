@@ -18,10 +18,7 @@ const angelData = computedAsync(async (onCancel) => {
 
 	onCancel(() => abortController.abort())
 
-	return await getAngel(
-		{ hash: $route.params.hash as string },
-		abortController.signal
-	)
+	return await getAngel({ hash: $route.params.hash as string })
 })
 
 function getIconSrc() {

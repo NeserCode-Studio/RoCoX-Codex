@@ -2745,14 +2745,12 @@ dependencies = [
 
 [[package]]
 name = "rocox-codex"
-version = "1.0.0-alpha.1"
+version = "1.0.0-alpha.3"
 dependencies = [
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
- "webview2-com",
- "windows 0.39.0",
 ]
 
 [[package]]

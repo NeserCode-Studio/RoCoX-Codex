@@ -2,15 +2,16 @@
 import { BookOpenIcon, QuestionMarkCircleIcon } from "@heroicons/vue/20/solid"
 import Menu from "./native/Menu.vue"
 import GoBack from "./native/GoBack.vue"
-import { computed } from "vue"
+import { computed, onMounted } from "vue"
 import { RouterLink, useRoute } from "vue-router"
 import { useStorage } from "@vueuse/core"
+import { nextTickToShow } from "../composables/useLocal"
 
 const $route = useRoute()
 const shouldShowLinksPath = ["home", "about"]
 const hasActivedLink = computed(() => {
 	return shouldShowLinksPath.includes(
-		(($route.name as string) ?? "home").toLowerCase()
+		(($route.name as string) ?? "").toLowerCase()
 	)
 })
 
@@ -23,6 +24,12 @@ const categoryNameMap = new Map([
 function getMatchCategoryName() {
 	return categoryNameMap.get(category.value)
 }
+
+onMounted(() => {
+	setTimeout(() => {
+		nextTickToShow()
+	}, 0)
+})
 </script>
 
 <template>

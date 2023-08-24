@@ -28,15 +28,12 @@ const listData = computedAsync(async (onCancel) => {
 	const abortController = new AbortController()
 
 	onCancel(() => abortController.abort())
-	return await getSkillList(
-		{
-			id: id.value,
-			search: search.value,
-			feature: feature.value,
-			page: page.value,
-		},
-		abortController.signal
-	)
+	return await getSkillList({
+		id: id.value,
+		search: search.value,
+		feature: feature.value,
+		page: page.value,
+	})
 })
 
 function getFeatureIconSrc(propertyIndex: string) {
@@ -122,7 +119,7 @@ function goSkillView(hash: string) {
 				</span>
 			</span>
 		</div>
-		<Transition name="slidedown" mode="in-out" :appear="true">
+		<Transition name="slidedown" mode="in-out" appear>
 			<div class="empty-palceholder" v-if="isEmpty">
 				<span class="empty-icons">
 					<CubeTransparentIcon class="icon" /> ·

@@ -17,10 +17,7 @@ const skillData = computedAsync(async (onCancel) => {
 
 	onCancel(() => abortController.abort())
 
-	return await getSkill(
-		{ hash: $route.params.hash as string },
-		abortController.signal
-	)
+	return await getSkill({ hash: $route.params.hash as string })
 })
 
 function getPropertyIconSrc(propertyIndex: string) {

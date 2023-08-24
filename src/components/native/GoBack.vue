@@ -12,7 +12,7 @@ const goPrevHistory = useThrottleFn(() => {
 </script>
 
 <template>
-	<Transition name="slideright" mode="out-in" appear :duration="800">
+	<Transition name="slideright" mode="out-in" appear :duration="2000">
 		<button
 			v-if="!alwaysTargetNewWindow"
 			class="navigation-return"

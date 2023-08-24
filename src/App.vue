@@ -3,32 +3,46 @@ import TitleBar from "./components/native/TitleBar.vue"
 import Dialog from "./components/Dialog.vue"
 import TopLinks from "./components/TopLinks.vue"
 
-import { ref, onMounted, provide } from "vue"
+import { ref, provide, onMounted, nextTick } from "vue"
 import { useStorage } from "@vueuse/core"
-import { nextTickToShow } from "./composables/useLocal"
 import { UpdateTitleFunctionalKey } from "./tokens"
+import { useDeCryptKey } from "./composables/useLocal"
 
-const isOpenModelDialog = ref(false)
+const salt = useStorage("rocox-dev-salt", "")
+const password = useStorage("rocox-dev-password", "")
+const useDev = useStorage("rocox-dev-tools-state", false)
+const isRoundedAvatar = useStorage("rocox-avatar-rounded", false)
+
+const isOpenModelDialog = ref(isRoundedAvatar.value)
 const slideDirection = useStorage(
 	"rocox-navigation-transition-direction",
 	"slideleft"
 )
-
-onMounted(() => {
-	setTimeout(() => {
-		nextTickToShow()
-	}, 0)
-})
 
 const title = ref("RocoKindom Codex")
 function titleUpdateFn(change: string) {
 	title.value = change
 }
 provide(UpdateTitleFunctionalKey, { titleUpdateFn })
+
+onMounted(() => {
+	useDev.value = useDeCryptKey(salt.value, password.value)
+	if (useDev.value)
+		nextTick(() => {
+			isOpenModelDialog.value = false
+		})
+})
 </script>
 
 <template>
-	<div id="app-main">
+	<div
+		id="app-main"
+		@contextmenu="
+			(e) => {
+				// e.preventDefault()
+			}
+		"
+	>
 		<TitleBar :titleText="title" />
 		<Dialog v-model:isOpen="isOpenModelDialog" />
 		<TopLinks />

@@ -1,26 +1,26 @@
-import axios from "axios"
+import { RocoRequest } from "./useHttp"
 import NProgress from "nprogress"
 
 const baseURL = "https://api.rocotime.com/api"
-const timeout = 3000
+const timeout = 5000
 const headers = {
 	authority: "api.rocotime.com",
 	accept: "application/json, text/plain, */*",
 	"accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
 	// "content-type": "application/json",
-	// "Access-Control-Allow-Credentials": "true",
-	// dnt: "1",
-	// origin: "https://rocotime.com",
-	// "sec-ch-ua":
-	// 	'"Not/A)Brand";v="99", "Microsoft Edge";v="115", "Chromium";v="115"',
-	// "sec-ch-ua-mobile": "?0",
-	// "sec-ch-ua-platform": '"Windows"',
-	// "sec-fetch-dest": "empty",
-	// "sec-fetch-mode": "cors",
-	// "sec-fetch-site": "same-site",
-	// "sec-gpc": "1",
-	// "user-agent":
-	// 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188",
+	"Access-Control-Allow-Credentials": "true",
+	dnt: "1",
+	origin: "https://rocotime.com",
+	"sec-ch-ua":
+		'"Not/A)Brand";v="99", "Microsoft Edge";v="115", "Chromium";v="115"',
+	"sec-ch-ua-mobile": "?0",
+	"sec-ch-ua-platform": '"Windows"',
+	"sec-fetch-dest": "empty",
+	"sec-fetch-mode": "cors",
+	"sec-fetch-site": "same-site",
+	"sec-gpc": "1",
+	"user-agent":
+		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188",
 }
 const iconStaticURL = "https://res.17roco.qq.com/res/combat/icons/"
 const itemStaticURL = "https://res.17roco.qq.com/res/item/"
@@ -37,10 +37,10 @@ const damageTypeStaticMap = new Map([
 ])
 const talentStaticURL = "https://res.17roco.qq.com/res/talent/"
 
-const rocoApi = axios.create({
+const rocoApi = new RocoRequest({
 	baseURL,
-	headers,
 	timeout,
+	headers,
 })
 
 interface FeatureObject {
@@ -69,36 +69,23 @@ interface ItemListParma {
 }
 
 // Request Interceptions
-rocoApi.interceptors.request.use(
-	(config) => {
-		NProgress.start()
-		return config
-	},
-	(error) => {
-		NProgress.done()
-		return Promise.reject(error)
-	}
-)
+rocoApi.setInterceptors("request")(() => {
+	NProgress.start()
+})
 
 // Response Interceptions
-rocoApi.interceptors.response.use(
-	(config) => {
-		NProgress.done()
-		return config
-	},
-	(error) => {
-		NProgress.done()
-		return Promise.reject(error)
-	}
-)
+rocoApi.setInterceptors("response")(() => {
+	NProgress.done()
+})
 
 // Request AbortController Signal
-type Signal = AbortSignal
+// type Signal = AbortSignal
 
 export const useApi = () => {
 	// Angel Feature Map
-	async function getFeatures(signal?: Signal) {
-		const response = await rocoApi.get("/feature/", { signal })
+	async function getFeatures() {
+		const response = await rocoApi.get("/feature/")
+
 		const obj: FeatureObject[] = response.data.list
 		const map = new Map()
 		obj.forEach((pair) => {
@@ -114,16 +101,15 @@ export const useApi = () => {
 			id: "",
 			feature: "",
 			page: 1,
-		},
-		signal?: Signal
+		}
 	) {
-		const response = await rocoApi.post("/spiritList/", params, { signal })
+		const response = await rocoApi.post("/spiritList/", params)
 		return response.data.data
 	}
 
 	// Angel Detail
-	async function getAngel(params: { hash: string }, signal?: Signal) {
-		const response = await rocoApi.post("/detail/angel/", params, { signal })
+	async function getAngel(params: { hash: string }) {
+		const response = await rocoApi.post("/detail/angel/", params)
 		return response.data.data
 	}
 
@@ -133,10 +119,9 @@ export const useApi = () => {
 			search: "",
 			id: "",
 			page: 1,
-		},
-		signal?: Signal
+		}
 	) {
-		const response = await rocoApi.post("/Itemlist/", params, { signal })
+		const response = await rocoApi.post("/Itemlist/", params)
 		return response.data.data
 	}
 
@@ -147,16 +132,15 @@ export const useApi = () => {
 			id: "",
 			feature: "",
 			page: 1,
-		},
-		signal?: Signal
+		}
 	) {
-		const response = await rocoApi.post("/Skilllist/", params, { signal })
+		const response = await rocoApi.post("/Skilllist/", params)
 		return response.data.data
 	}
 
 	// Skill Detail
-	async function getSkill(params: { hash: string }, signal?: Signal) {
-		const response = await rocoApi.post("/detail/skill/", params, { signal })
+	async function getSkill(params: { hash: string }) {
+		const response = await rocoApi.post("/detail/skill/", params)
 		return response.data
 	}
 

@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { onActivated } from "vue"
 import { useStorage } from "@vueuse/core"
+import { invoke } from "@tauri-apps/api"
 import { getTauriVersion, getName, getVersion } from "@tauri-apps/api/app"
 
+const useDev = useStorage("rocox-dev-tools-state", false)
 const isFullRound = useStorage("rocox-avatar-rounded", false)
 const slideDirection = useStorage(
 	"rocox-navigation-transition-direction",
@@ -22,7 +24,12 @@ async function getAppVersionAsync() {
 	return await getVersion()
 }
 function toggleAvatarRounded() {
-	isFullRound.value = !isFullRound.value
+	if (useDev.value) {
+		isFullRound.value = true
+		invoke("use_devtools")
+	} else {
+		isFullRound.value = !isFullRound.value
+	}
 }
 
 onActivated(async () => {

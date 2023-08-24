@@ -24,14 +24,11 @@ const listData = computedAsync(async (onCancel) => {
 	const abortController = new AbortController()
 
 	onCancel(() => abortController.abort())
-	return await getItemList(
-		{
-			id: id.value,
-			search: search.value,
-			page: page.value,
-		},
-		abortController.signal
-	)
+	return await getItemList({
+		id: id.value,
+		search: search.value,
+		page: page.value,
+	})
 })
 
 const loadErrorList = ref<string[]>([])

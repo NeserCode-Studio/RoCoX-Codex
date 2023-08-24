@@ -29,15 +29,13 @@ const listData = computedAsync(async (onCancel) => {
 	const abortController = new AbortController()
 
 	onCancel(() => abortController.abort())
-	return await getAngelList(
-		{
-			id: id.value,
-			search: search.value,
-			feature: feature.value,
-			page: page.value,
-		},
-		abortController.signal
-	)
+
+	return await getAngelList({
+		id: id.value,
+		search: search.value,
+		feature: feature.value,
+		page: page.value,
+	})
 })
 const isEmpty = computedAsync(() => listData.value.length === 0)
 const pageSize = useStorage("rocox-api-angel-list-size", 21)
@@ -125,7 +123,7 @@ function goAngelView(hash: string) {
 				/>
 			</span>
 		</div>
-		<Transition name="slidein" mode="in-out" :appear="true">
+		<Transition name="slidein" mode="in-out" appear>
 			<div class="empty-palceholder" v-if="isEmpty">
 				<span class="empty-icons">
 					<CubeTransparentIcon class="icon" /> ·

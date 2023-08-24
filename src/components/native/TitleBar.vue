@@ -105,6 +105,7 @@ function removeMoveClass(event: MouseEvent) {
 }
 
 const { isDarkMode, toggleDarkMode } = useDarkMode()
+const isRoundedAvatar = useStorage("rocox-avatar-rounded", false)
 const alwaysUseFocusShortcut = useStorage("rocox-shortcut-use-focus", true)
 
 onMounted(async () => {
@@ -120,9 +121,11 @@ onMounted(async () => {
 		} else throttleToggleIspinned()
 	})
 	await register("CommandOrControl+Q", async () => {
-		if (alwaysUseFocusShortcut.value) {
-			if (await appWindow.isFocused()) $router.go(0)
-		} else $router.go(0)
+		if (isRoundedAvatar.value) {
+			if (alwaysUseFocusShortcut.value) {
+				if (await appWindow.isFocused()) $router.go(0)
+			} else $router.go(0)
+		}
 	})
 })
 </script>

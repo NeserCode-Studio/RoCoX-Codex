@@ -8,11 +8,16 @@
 	},
 	"package": {
 		"productName": "RoCoX Codex",
-		"version": "1.0.0-alpha.1"
+		"version": "1.0.0-alpha.3"
 	},
 	"tauri": {
 		"allowlist": {
-			"all": true
+			"all": true,
+			"http": {
+				"all": true,
+				"request": true,
+				"scope": ["http://**", "https://**"]
+			}
 		},
 		"bundle": {
 			"active": true,
