@@ -104,9 +104,11 @@ function goSkillView(hash: string) {
 						class="icon property"
 						:src="getFeatureIconSrc(skill.property)"
 						alt="skill property"
+						draggable="false"
 					/>
 					<img
 						v-if="skill.power !== '--'"
+						draggable="false"
 						class="icon damage"
 						:src="damageTypeStaticMap.get(skill.damageType)"
 						:alt="skill.damageType === '1' ? '物理伤害' : '魔法伤害'"

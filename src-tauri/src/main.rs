@@ -44,6 +44,7 @@ fn main() {
                                 .Headers()
                                 .unwrap()
                                 .SetHeader(
+                                    // Origin
                                     PCWSTR::from_raw(str_to_pcwstr("referrer").as_ptr()),
                                     PCWSTR::from_raw(
                                         str_to_pcwstr("https://rocotime.com").as_ptr(),

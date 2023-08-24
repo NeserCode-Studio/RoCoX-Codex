@@ -46,7 +46,7 @@ function toggleSkillFix() {
 const isLoadingData = ref(true)
 watch(skillData, (val) => {
 	isLoadingData.value = false
-	// console.log(val)
+	console.log(val)
 })
 
 const $router = useRouter()
@@ -87,6 +87,7 @@ function goAngelView(hash: string) {
 			<img
 				v-if="skillData.data.power !== '--'"
 				class="icon damage"
+				draggable="false"
 				:src="damageTypeStaticMap.get(skillData.data.damageType)"
 				:alt="skillData.data.damageType === '1' ? '物理伤害' : '魔法伤害'"
 				:title="skillData.data.damageType === '1' ? '物理伤害' : '魔法伤害'"
@@ -122,6 +123,7 @@ function goAngelView(hash: string) {
 						class="icon"
 						:src="getAngelIconSrc(angel.iconSrc)"
 						alt="angel icon"
+						draggable="false"
 					/>
 				</span>
 			</span>

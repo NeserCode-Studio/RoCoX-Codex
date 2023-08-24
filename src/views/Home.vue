@@ -42,6 +42,7 @@ const paginationProps = ref({
 	listSize: 0,
 	pageSize: 0,
 	total: 0,
+	canJump: true,
 })
 const paginationPage = ref(1)
 const hasPrev = computed(() => !(paginationPage.value === 1))
@@ -72,10 +73,12 @@ function updatePaginationSize(data: {
 	listSize: number
 	pageSize: number
 	total: number
+	canJump?: boolean
 }) {
 	paginationProps.value.listSize = data.listSize
 	paginationProps.value.pageSize = data.pageSize
 	paginationProps.value.total = data.total
+	paginationProps.value.canJump = data.canJump!
 }
 function pageUpdateFn(page: number) {
 	let totalPage = Math.round(
@@ -112,7 +115,7 @@ function pageUpdateFn(page: number) {
 			@update:sizes="updatePaginationSize"
 		/>
 		<Pagination
-			:can-jump="canJump"
+			:can-jump="canJump && paginationProps.canJump"
 			:has-prev="hasPrev"
 			:has-next="hasNext"
 			:total="paginationProps.total"

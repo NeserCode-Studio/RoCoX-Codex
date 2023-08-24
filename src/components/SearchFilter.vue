@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, inject, watch, computed } from "vue"
+import { ref, inject, watch } from "vue"
 import { UpdateSearchFunctionalKey } from "../tokens"
 import { useStorage } from "@vueuse/core"
 const innerValue = ref("")

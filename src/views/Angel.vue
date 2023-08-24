@@ -249,6 +249,7 @@ function goSkillView(hash: string) {
 										class="feature icon"
 										:src="getFeatureIconSrc(skill.property)"
 										alt="skill property"
+										draggable="false"
 									/>
 									<span class="pp">{{ skill.ppMax }}</span> ·
 									<span class="power">{{ skill.power }}</span>
@@ -269,6 +270,7 @@ function goSkillView(hash: string) {
 										class="talent icon"
 										:src="getTalentIconSrc(talent.id)"
 										alt="talent icon"
+										draggable="false"
 									/>
 									<span class="id">#{{ talent.id }}</span>
 									<span class="inline-block mx-1">·</span>
@@ -369,7 +371,7 @@ function goSkillView(hash: string) {
 .skill-main,
 .talent-main,
 .chain-main {
-	@apply max-h-48 w-full flex flex-wrap justify-center
+	@apply max-h-40 w-full flex flex-wrap justify-center
 	transition-all overflow-auto snap-y snap-mandatory;
 }
 .info-item,

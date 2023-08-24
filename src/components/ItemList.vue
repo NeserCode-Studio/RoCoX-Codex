@@ -57,6 +57,7 @@ watch(listData, (val: any[]) => {
 		listSize: val.length,
 		pageSize: pageSize.value,
 		total: totalFromID.value,
+		canJump: false,
 	})
 	console.log(listData.value)
 })
@@ -66,7 +67,8 @@ watch(listData, (val: any[]) => {
 	<div class="item-list-main custom-scrollbar">
 		<div class="item-card" v-for="item in listData" :key="item.hash">
 			<span class="name-text">
-				<span class="id">#{{ item.id }}</span> ·
+				<span class="id">#{{ item.id }}</span>
+				<span class="font-bold inline-block mx-1"> · </span>
 				<span class="name">{{ item.name }}</span>
 			</span>
 			<span class="details">
@@ -78,17 +80,19 @@ watch(listData, (val: any[]) => {
 					alt="item image"
 					draggable="false"
 				/>
-				<CubeTransparentIcon v-else class="icon" />
+				<CubeTransparentIcon v-else class="icon placeholder" />
 				<span class="text">
 					<span class="unique"
 						>持有 · {{ parseInt(item.Unique) ? "" : "不" }}唯一</span
 					>
 					<span class="price">售价 · {{ item.Price }}</span>
-					<span class="desc">描述 · {{ item.Desc }}</span>
+					<span class="desc"
+						>描述 · {{ item.Desc ?? "这是一段空白的描述" }}</span
+					>
 				</span>
 			</span>
 		</div>
-		<Transition name="slidedown" mode="in-out" :appear="true">
+		<Transition name="slideup" mode="in-out" appear>
 			<div class="empty-palceholder" v-if="isEmpty">
 				<span class="empty-icons">
 					<CubeTransparentIcon class="icon" /> ·
@@ -109,28 +113,40 @@ watch(listData, (val: any[]) => {
 }
 
 .item-card {
-	@apply inline-flex flex-col;
+	@apply inline-flex flex-col items-center justify-center max-w-xs mb-0.5
+	snap-start;
 }
 
 .name-text {
-	@apply inline-flex items-center
-  font-semibold text-base;
+	@apply inline-flex w-full items-center justify-start my-1
+  font-bold text-sm;
 }
 .details {
-	@apply inline-flex;
+	@apply inline-flex w-full items-center justify-center;
 }
 .details .icon {
-	@apply w-12 h-12;
+	@apply inline-flex justify-center items-center w-16 h-fit box-content mr-1
+  border-2 rounded transition-all
+	border-slate-300 dark:border-slate-600;
+}
+.placeholder {
+	@apply w-16 p-0.5 px-1;
 }
 .details .text {
-	@apply inline-flex flex-wrap;
+	@apply inline-flex flex-wrap justify-between items-center;
 }
 
 .text .unique,
 .text .price,
 .text .desc {
-	@apply inline-block px-1 py-0.5 mr-1 mb-1
-  border-2 rounded;
+	@apply inline-flex items-center h-fit px-1 py-0.5 mr-1 mb-1
+	text-gray-700 dark:text-gray-300
+	border-slate-300 dark:border-slate-600
+  border-2 rounded text-sm font-bold text-opacity-75 dark:text-opacity-75
+	transition-all;
+}
+.text .desc {
+	@apply w-full mb-0;
 }
 
 .empty-palceholder {

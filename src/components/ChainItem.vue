@@ -14,6 +14,7 @@ interface ChainItemProp {
 }
 </script>
 <script lang="ts" setup>
+// @ts-ignore
 import { BoltIcon } from "@heroicons/vue/20/solid"
 import { Ref, ref, toRefs } from "vue"
 
@@ -23,7 +24,7 @@ import { useStorage } from "@vueuse/core"
 import { WindowCreator } from "../composables/useWindow"
 
 const $props = defineProps<{
-	chainTo: ChainItemProp
+	chainTo: ChainItemProp | ChainItemProp[]
 }>()
 const { chainTo } = toRefs($props)
 const { iconStaticURL } = useApi()
@@ -35,10 +36,6 @@ const iconSrc = (hash: string, angelId: string) => {
 
 	let id = parseInt(angelId)
 	return `${iconStaticURL}${id < 100 ? "0" : ""}${id}-.png`
-}
-
-const lastLevelClass = (to: string | ChainItemProp[]) => {
-	return to == "0" ? "last-level-in-chain" : null
 }
 
 const $router = useRouter()
@@ -67,9 +64,9 @@ function goAngelView(hash: string) {
 </script>
 
 <template>
-	<div :class="['chain-item', lastLevelClass(chainTo.to)]">
+	<div class="chain-item">
 		<template
-			v-if="chainTo.start && !Array.isArray(chainTo)"
+			v-if="!Array.isArray(chainTo) && chainTo.start"
 			class="chain-children"
 		>
 			<span
@@ -88,7 +85,7 @@ function goAngelView(hash: string) {
 			</span>
 			<span class="option">
 				<BoltIcon class="icon" />
-				<span class="lv" v-if="chainTo.lv">lv {{ chainTo.lv }}</span>
+				<span class="lv" v-if="chainTo.lv">Level {{ chainTo.lv }}</span>
 				<span class="lv" v-else>Super</span>
 			</span>
 			<chainItem
@@ -96,7 +93,7 @@ function goAngelView(hash: string) {
 				:chainTo="chainTo.to"
 			/>
 		</template>
-		<template v-if="!chainTo.start && Array.isArray(chainTo)">
+		<template v-if="Array.isArray(chainTo)">
 			<span v-for="item of chainTo" class="chain-children">
 				<span
 					class="angel-item"
