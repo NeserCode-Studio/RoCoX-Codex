@@ -88,7 +88,7 @@ function goSkillView(hash: string) {
 			class="skill-card"
 			v-for="skill in listData"
 			:key="skill.hash"
-			@click="setupWindowParams(skill.id, skill.name, skill.hash)"
+			@click="setupWindowParams(skill.id!, skill.name!, skill.hash!)"
 		>
 			<span class="name-text">
 				<span class="id">#{{ skill.id }}</span>
@@ -107,7 +107,7 @@ function goSkillView(hash: string) {
 						v-if="skill.power !== '--'"
 						draggable="false"
 						class="icon damage"
-						:src="damageTypeStaticMap.get(skill.damageType)"
+						:src="damageTypeStaticMap.get(skill.damageType!)"
 						:alt="skill.damageType === '1' ? '物理伤害' : '魔法伤害'"
 						:title="skill.damageType === '1' ? '物理伤害' : '魔法伤害'"
 					/>

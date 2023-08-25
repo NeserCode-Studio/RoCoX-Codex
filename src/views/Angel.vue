@@ -38,11 +38,11 @@ function getSelectedTabClass(selectedIndex: number, index: number) {
 const angelIconHashMap = useStorage("rocox-angel-icon-hash-map", new Map())
 
 const isLoadingData = ref(true)
-watch(angelData, (val) => {
+watch(angelData, (_val) => {
 	isLoadingData.value = false
 	// Storage icon hash
 	angelIconHashMap.value.set(angelData.value.angel.hash, getIconSrc())
-	console.log(val)
+	// console.log(_val)
 })
 
 const isShowTalentFix = ref(false)
@@ -237,14 +237,14 @@ function goSkillView(hash: string) {
 								v-for="skill of angelData.skills"
 								class="skill-item"
 								:key="skill.id"
-								@click="setupWindowParams(skill.id, skill.name, skill.hash)"
+								@click="setupWindowParams(skill.id!, skill.name!, skill.hash!)"
 							>
 								<span class="id">#{{ skill.id }}</span>
 								<span class="name">{{ skill.name }}</span>
 								<span class="skill-details">
 									<img
 										class="feature icon"
-										:src="getFeatureIconSrc(skill.property)"
+										:src="getFeatureIconSrc(skill.property!)"
 										alt="skill property"
 										draggable="false"
 									/>
@@ -265,23 +265,26 @@ function goSkillView(hash: string) {
 								<span class="talent-details">
 									<img
 										class="talent icon"
-										:src="getTalentIconSrc(talent.id)"
+										:src="getTalentIconSrc(talent.id!)"
 										alt="talent icon"
 										draggable="false"
 									/>
 									<span class="id">#{{ talent.id }}</span>
 									<span class="inline-block mx-1">·</span>
-									<span class="name">{{ talent.config.name }}</span>
+									<span class="name">{{ talent.config!.name }}</span>
 								</span>
 								<span class="description">{{
-									isShowTalentFix ? talent.xmjx : talent.config.des
+									isShowTalentFix ? talent.xmjx : talent.config!.des
 								}}</span>
 							</span>
 						</div>
 					</TabPanel>
 					<TabPanel class="tab-panel chain" v-show="angelData.angel.chain">
 						<div class="chain-main custom-scrollbar">
-							<ChainItem :chain-to="angelData.angel.chain" />
+							<ChainItem
+								v-if="angelData.angel.chain !== false"
+								:chain-to="angelData.angel.chain!"
+							/>
 						</div>
 					</TabPanel>
 				</TabPanels>

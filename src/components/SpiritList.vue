@@ -53,6 +53,7 @@ watch(listData, (val: any[]) => {
 		pageSize: pageSize.value,
 		total: totalFromID.value,
 	})
+	// console.log(listData.value)
 })
 
 function getFeatureIconSrc(featureIndex: string) {
@@ -92,7 +93,7 @@ function goAngelView(hash: string) {
 			class="angel-card"
 			v-for="angel in listData"
 			:key="angel.hash"
-			@click="setupWindowParams(angel.id, angel.name, angel.hash)"
+			@click="setupWindowParams(angel.id!, angel.name!, angel.hash!)"
 		>
 			<span class="details">
 				<span class="name-text">#{{ angel.id }} · {{ angel.name }}</span>
@@ -111,7 +112,7 @@ function goAngelView(hash: string) {
 					draggable="false"
 					class="angel-icon icon"
 					v-show="angel.img"
-					:src="getAngelIconSrc(angel.iconSrc)"
+					:src="getAngelIconSrc(angel.iconSrc!)"
 					alt="angel icon"
 					referrerPolicy="no-referrer"
 					loading="lazy"

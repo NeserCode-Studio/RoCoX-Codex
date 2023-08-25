@@ -62,17 +62,17 @@ watch(listData, (val: any[]) => {
 
 <template>
 	<div class="item-list-main custom-scrollbar">
-		<div class="item-card" v-for="item in listData" :key="item.hash">
+		<div class="item-card" v-for="item in listData" :key="item.id!">
 			<span class="name-text">
 				<span class="id">#{{ item.id }}</span>
-				<span class="font-bold inline-block mx-1"> · </span>
+				<span class="inline-block mx-1 font-bold"> · </span>
 				<span class="name">{{ item.name }}</span>
 			</span>
 			<span class="details">
 				<img
 					v-if="item.id && !loadErrorList.includes(item.id)"
 					class="icon"
-					@error="(e) => onerrorList(e, item.id)"
+					@error="(e) => onerrorList(e, item.id!)"
 					:src="getItemSrc(item.id)"
 					alt="item image"
 					draggable="false"
@@ -80,7 +80,7 @@ watch(listData, (val: any[]) => {
 				<CubeTransparentIcon v-else class="icon placeholder" />
 				<span class="text">
 					<span class="unique"
-						>持有 · {{ parseInt(item.Unique) ? "" : "不" }}唯一</span
+						>持有 · {{ parseInt(item.Unique!) ? "" : "不" }}唯一</span
 					>
 					<span class="price">售价 · {{ item.Price }}</span>
 					<span class="desc"

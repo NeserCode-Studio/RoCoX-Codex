@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-// @ts-ignore
 import GoBack from "../components/native/GoBack.vue"
 // import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 
@@ -42,9 +41,9 @@ function toggleSkillFix() {
 }
 
 const isLoadingData = ref(true)
-watch(skillData, (val) => {
+watch(skillData, (_val) => {
 	isLoadingData.value = false
-	console.log(val)
+	// console.log(_val)
 })
 
 const $router = useRouter()
@@ -79,14 +78,14 @@ function goAngelView(hash: string) {
 			<img
 				class="icon property"
 				draggable="false"
-				:src="getPropertyIconSrc(skillData.data.property)"
+				:src="getPropertyIconSrc(skillData.data.property!)"
 				alt="property icon"
 			/>
 			<img
 				v-if="skillData.data.power !== '--'"
 				class="icon damage"
 				draggable="false"
-				:src="damageTypeStaticMap.get(skillData.data.damageType)"
+				:src="damageTypeStaticMap.get(skillData.data.damageType!)"
 				:alt="skillData.data.damageType === '1' ? '物理伤害' : '魔法伤害'"
 				:title="skillData.data.damageType === '1' ? '物理伤害' : '魔法伤害'"
 			/>
@@ -107,7 +106,7 @@ function goAngelView(hash: string) {
 			</span>
 			<span class="detail-item angels">
 				<span class="prefix"
-					>拥有此技能的精灵 · {{ skillData.angel.length }}</span
+					>拥有此技能的精灵 · {{ skillData.angel!.length }}</span
 				>
 				<span
 					v-for="angel in skillData.angel"

@@ -2745,7 +2745,7 @@ dependencies = [
 
 [[package]]
 name = "rocox-codex"
-version = "1.0.0-alpha.3"
+version = "1.0.0-alpha.4"
 dependencies = [
  "serde",
  "serde_json",

@@ -2,19 +2,8 @@
 export default {
 	name: "chainItem",
 }
-
-interface ChainItemProp {
-	hash: string
-	id: string
-	img: string
-	name: string
-	start?: boolean
-	lv?: string
-	to: ChainItemProp[] | "0"
-}
 </script>
 <script lang="ts" setup>
-// @ts-ignore
 import { BoltIcon } from "@heroicons/vue/20/solid"
 import { Ref, ref, toRefs } from "vue"
 
@@ -22,6 +11,8 @@ import { useApi } from "../composables/useApi"
 import { useRouter } from "vue-router"
 import { useStorage } from "@vueuse/core"
 import { WindowCreator } from "../composables/useWindow"
+
+import type { ChainItemProp } from "../share"
 
 const $props = defineProps<{
 	chainTo: ChainItemProp | ChainItemProp[]
@@ -71,12 +62,12 @@ function goAngelView(hash: string) {
 		>
 			<span
 				class="angel-item"
-				@click="setupWindowParams(chainTo.id, chainTo.name, chainTo.hash)"
+				@click="setupWindowParams(chainTo.id!, chainTo.name!, chainTo.hash!)"
 			>
 				<img
 					class="angel-img"
 					v-if="chainTo.id"
-					:src="iconSrc(chainTo.hash, chainTo.id)"
+					:src="iconSrc(chainTo.hash!, chainTo.id!)"
 					alt="Angel icon"
 					draggable="false"
 					loading="lazy"
@@ -90,19 +81,19 @@ function goAngelView(hash: string) {
 			</span>
 			<chainItem
 				v-if="!(typeof chainTo.to === 'string')"
-				:chainTo="chainTo.to"
+				:chainTo="chainTo.to!"
 			/>
 		</template>
 		<template v-if="Array.isArray(chainTo)">
 			<span v-for="item of chainTo" class="chain-children">
 				<span
 					class="angel-item"
-					@click="setupWindowParams(item.id, item.name, item.hash)"
+					@click="setupWindowParams(item.id!, item.name!, item.hash!)"
 				>
 					<img
 						class="angel-img"
 						v-if="item.id"
-						:src="iconSrc(item.hash, item.id)"
+						:src="iconSrc(item.hash!, item.id!)"
 						alt="Angel icon"
 						draggable="false"
 						loading="lazy"
@@ -114,7 +105,7 @@ function goAngelView(hash: string) {
 					<span class="lv" v-else>Super</span>
 					<BoltIcon class="icon" />
 				</span>
-				<chainItem v-if="!(typeof item.to === 'string')" :chainTo="item.to" />
+				<chainItem v-if="!(typeof item.to === 'string')" :chainTo="item.to!" />
 			</span>
 		</template>
 	</div>

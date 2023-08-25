@@ -1,6 +1,17 @@
-// @ts-ignore
 import { RocoRequest } from "./useHttp"
 import NProgress from "nprogress"
+
+import {
+	AngelDetailObject,
+	AngelListData,
+	AngelListParma,
+	FeatureListData,
+	ItemListData,
+	ItemListParma,
+	SkillDetailObject,
+	SkillListData,
+	SkillListParma,
+} from "../share"
 
 const baseURL = "https://api.rocotime.com/api"
 const timeout = 5000
@@ -44,40 +55,6 @@ const rocoApi = new RocoRequest({
 	headers,
 })
 
-interface FeatureObject {
-	id: string
-	name: string
-}
-
-interface AngelListItemObject {
-	id: string
-	group: string
-	hash: string
-	img?: string
-	iconSrc: string
-	features: string[]
-}
-
-interface AngelListParma {
-	search: string
-	id: string
-	feature: string
-	page: number
-}
-
-interface SkillListParma {
-	search: string
-	id: string
-	feature: string
-	page: number
-}
-
-interface ItemListParma {
-	search: string
-	id: string
-	page: number
-}
-
 // Request Interceptions
 rocoApi.setInterceptors("request")(() => {
 	NProgress.start()
@@ -94,16 +71,14 @@ rocoApi.setInterceptors("response")(() => {
 export const useApi = () => {
 	// Angel Feature Map
 	async function getFeatures() {
-		const response = await rocoApi.get<{ list: FeatureObject[] }>(
-			"/feature/",
-			{}
-		)
+		const response = await rocoApi.get<FeatureListData>("/feature/")
 
-		const obj: FeatureObject[] = response.data.list
-		const map = new Map()
+		const obj = response.data.list
+		const map = new Map<string, string>()
 		obj.forEach((pair) => {
-			map.set(pair.id, pair.name)
+			map.set(pair.id!, pair.name!)
 		})
+
 		return map
 	}
 
@@ -116,17 +91,18 @@ export const useApi = () => {
 			page: 1,
 		}
 	) {
-		const response = await rocoApi.post<{ data: AngelListItemObject[] }>(
-			"/spiritList/",
-			params
-		)
+		const response = await rocoApi.post<AngelListData>("/spiritList/", params)
 
 		return response.data.data
 	}
 
 	// Angel Detail
 	async function getAngel(params: { hash: string }) {
-		const response = await rocoApi.post("/detail/angel/", params)
+		const response = await rocoApi.post<AngelDetailObject>(
+			"/detail/angel/",
+			params
+		)
+
 		return response.data.data
 	}
 
@@ -138,7 +114,7 @@ export const useApi = () => {
 			page: 1,
 		}
 	) {
-		const response = await rocoApi.post("/Itemlist/", params)
+		const response = await rocoApi.post<ItemListData>("/Itemlist/", params)
 		return response.data.data
 	}
 
@@ -151,13 +127,16 @@ export const useApi = () => {
 			page: 1,
 		}
 	) {
-		const response = await rocoApi.post("/Skilllist/", params)
+		const response = await rocoApi.post<SkillListData>("/Skilllist/", params)
 		return response.data.data
 	}
 
 	// Skill Detail
 	async function getSkill(params: { hash: string }) {
-		const response = await rocoApi.post("/detail/skill/", params)
+		const response = await rocoApi.post<SkillDetailObject>(
+			"/detail/skill/",
+			params
+		)
 		return response.data
 	}
 
