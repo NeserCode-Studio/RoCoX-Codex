@@ -1,5 +1,6 @@
 import { RocoRequest } from "./useHttp"
 import NProgress from "nprogress"
+import { useStorage } from "@vueuse/core"
 
 import {
 	AngelDetailObject,
@@ -11,7 +12,13 @@ import {
 	SkillDetailObject,
 	SkillListData,
 	SkillListParma,
+	Collections,
 } from "../share"
+
+const $UserCollections = useStorage<Collections>(
+	"rocox-user-collections",
+	new Map()
+)
 
 const baseURL = "https://api.rocotime.com/api"
 const timeout = 5000
@@ -79,6 +86,11 @@ export const useApi = () => {
 			map.set(pair.id!, pair.name!)
 		})
 
+		$UserCollections.value.set(
+			"GetFeatures",
+			($UserCollections.value.get("GetFeatures") ?? 0) + 1
+		)
+
 		return map
 	}
 
@@ -93,6 +105,11 @@ export const useApi = () => {
 	) {
 		const response = await rocoApi.post<AngelListData>("/spiritList/", params)
 
+		$UserCollections.value.set(
+			"GetAngelList",
+			($UserCollections.value.get("GetAngelList") ?? 0) + 1
+		)
+
 		return response.data.data
 	}
 
@@ -101,6 +118,11 @@ export const useApi = () => {
 		const response = await rocoApi.post<AngelDetailObject>(
 			"/detail/angel/",
 			params
+		)
+
+		$UserCollections.value.set(
+			"GetAngel",
+			($UserCollections.value.get("GetAngel") ?? 0) + 1
 		)
 
 		return response.data.data
@@ -115,6 +137,12 @@ export const useApi = () => {
 		}
 	) {
 		const response = await rocoApi.post<ItemListData>("/Itemlist/", params)
+
+		$UserCollections.value.set(
+			"GetItemList",
+			($UserCollections.value.get("GetItemList") ?? 0) + 1
+		)
+
 		return response.data.data
 	}
 
@@ -128,6 +156,12 @@ export const useApi = () => {
 		}
 	) {
 		const response = await rocoApi.post<SkillListData>("/Skilllist/", params)
+
+		$UserCollections.value.set(
+			"GetSkillList",
+			($UserCollections.value.get("GetSkillList") ?? 0) + 1
+		)
+
 		return response.data.data
 	}
 
@@ -137,6 +171,12 @@ export const useApi = () => {
 			"/detail/skill/",
 			params
 		)
+
+		$UserCollections.value.set(
+			"GetSkill",
+			($UserCollections.value.get("GetSkill") ?? 0) + 1
+		)
+
 		return response.data
 	}
 

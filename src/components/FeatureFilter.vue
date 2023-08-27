@@ -124,7 +124,7 @@ watch(checkedOption, (value) => {
 	@apply inline-flex justify-center items-center pl-2 pr-0.5 py-1
   border-2 rounded border-zinc-400
   bg-neutral-200 dark:bg-neutral-500
-  select-none cursor-pointer;
+  select-none cursor-pointer transition-all;
 }
 .btn-context .icon {
 	@apply w-4 h-4 mr-1

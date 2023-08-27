@@ -173,7 +173,7 @@ function goSkillView(hash: string) {
 	@apply w-6 h-6 inline-block my-1 ml-1 p-1
   border rounded
   bg-slate-200 dark:bg-slate-600 border-slate-400 dark:border-slate-500
-  overflow-hidden;
+  overflow-hidden transition-all;
 }
 .icon.damage {
 	@apply p-0;

@@ -14,6 +14,7 @@ import { appWindow } from "@tauri-apps/api/window"
 
 import { useDarkMode } from "../../composables/useDarkMode"
 import { register, unregisterAll } from "@tauri-apps/api/globalShortcut"
+import { Collections } from "../../share"
 
 const $props = withDefaults(
 	defineProps<{
@@ -107,6 +108,10 @@ function removeMoveClass(event: MouseEvent) {
 const { isDarkMode, toggleDarkMode } = useDarkMode()
 const isRoundedAvatar = useStorage("rocox-avatar-rounded", false)
 const alwaysUseFocusShortcut = useStorage("rocox-shortcut-use-focus", true)
+const $UserCollections = useStorage<Collections>(
+	"rocox-user-collections",
+	new Map()
+)
 
 onMounted(async () => {
 	await unregisterAll()
@@ -114,17 +119,32 @@ onMounted(async () => {
 		if (alwaysUseFocusShortcut.value) {
 			if (await appWindow.isFocused()) toggleDarkMode()
 		} else toggleDarkMode()
+
+		$UserCollections.value.set(
+			"KeyShortCut",
+			($UserCollections.value.get("KeyShortCut") ?? 0) + 1
+		)
 	})
 	await register("CommandOrControl+P", async () => {
 		if (alwaysUseFocusShortcut.value) {
 			if (await appWindow.isFocused()) throttleToggleIspinned()
 		} else throttleToggleIspinned()
+
+		$UserCollections.value.set(
+			"KeyShortCut",
+			($UserCollections.value.get("KeyShortCut") ?? 0) + 1
+		)
 	})
 	await register("CommandOrControl+Q", async () => {
 		if (isRoundedAvatar.value) {
 			if (alwaysUseFocusShortcut.value) {
 				if (await appWindow.isFocused()) $router.go(0)
 			} else $router.go(0)
+
+			$UserCollections.value.set(
+				"KeyShortCut",
+				($UserCollections.value.get("KeyShortCut") ?? 0) + 1
+			)
 		}
 	})
 })

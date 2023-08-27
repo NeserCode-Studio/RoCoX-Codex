@@ -173,3 +173,14 @@ export interface ItemListParma {
 	id: string
 	page: number
 }
+
+export type Collections = Map<
+	| "GetFeatures"
+	| "GetAngelList"
+	| "GetAngel"
+	| "GetSkillList"
+	| "GetSkill"
+	| "GetItemList"
+	| "KeyShortCut",
+	number
+>

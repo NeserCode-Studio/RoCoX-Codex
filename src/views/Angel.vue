@@ -15,7 +15,6 @@ const { getAngel, iconStaticURL, featureStaticURL, talentStaticURL } = useApi()
 
 const routeHash = $route.params.hash as string
 const angelData = computedAsync(async () => {
-	console.log(routeHash)
 	return await getAngel({ hash: routeHash })
 })
 
