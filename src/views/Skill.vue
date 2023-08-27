@@ -12,12 +12,9 @@ const $route = useRoute()
 const { getSkill, damageTypeStaticMap, featureStaticURL, iconStaticURL } =
 	useApi()
 
-const skillData = computedAsync(async (onCancel) => {
-	const abortController = new AbortController()
-
-	onCancel(() => abortController.abort())
-
-	return await getSkill({ hash: $route.params.hash as string })
+const routeHash = $route.params.hash as string
+const skillData = computedAsync(async () => {
+	return await getSkill({ hash: routeHash })
 })
 
 function getPropertyIconSrc(propertyIndex: string) {

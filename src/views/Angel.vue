@@ -13,12 +13,10 @@ import { WindowCreator } from "../composables/useWindow"
 const $route = useRoute()
 const { getAngel, iconStaticURL, featureStaticURL, talentStaticURL } = useApi()
 
-const angelData = computedAsync(async (onCancel) => {
-	const abortController = new AbortController()
-
-	onCancel(() => abortController.abort())
-
-	return await getAngel({ hash: $route.params.hash as string })
+const routeHash = $route.params.hash as string
+const angelData = computedAsync(async () => {
+	console.log(routeHash)
+	return await getAngel({ hash: routeHash })
 })
 
 function getIconSrc() {

@@ -39,7 +39,7 @@ export class RocoRequest {
 		// Request Interception
 		this.$interceptors.request()
 		console.log("HTTP ST GET - ", reqUrl)
-		console.time("GET" + reqUrl)
+		console.time(reqUrl)
 		// Request
 		const response = await fetch<T>(reqUrl, {
 			...this.$Option,
@@ -48,7 +48,7 @@ export class RocoRequest {
 			query: { ...params },
 			responseType: ResponseType.JSON,
 		})
-		console.timeEnd("GET" + reqUrl)
+		console.timeEnd(reqUrl)
 		console.log("HTTP RC GET - ", response.status)
 
 		// Response Interception
@@ -62,7 +62,7 @@ export class RocoRequest {
 		// Request Interception
 		this.$interceptors.request()
 		console.log("HTTP ST POST - ", reqUrl)
-		console.time("POST" + reqUrl)
+		console.time(reqUrl)
 		// Request
 		const response = await fetch<T>(reqUrl, {
 			...this.$Option,
@@ -71,7 +71,7 @@ export class RocoRequest {
 			body: Body.json({ ...params }),
 			responseType: ResponseType.JSON,
 		})
-		console.timeEnd("POST" + reqUrl)
+		console.timeEnd(reqUrl)
 		console.log("HTTP RC POST - ", response.status)
 
 		// Response Interception

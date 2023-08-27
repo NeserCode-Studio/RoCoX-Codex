@@ -19,7 +19,7 @@ const headers = {
 	authority: "api.rocotime.com",
 	accept: "application/json, text/plain, */*",
 	"accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-	// "content-type": "application/json",
+	"content-type": "application/json",
 	"Access-Control-Allow-Credentials": "true",
 	dnt: "1",
 	origin: "https://rocotime.com",
