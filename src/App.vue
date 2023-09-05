@@ -8,6 +8,8 @@ import { useStorage } from "@vueuse/core"
 import { UpdateTitleFunctionalKey } from "./tokens"
 import { useDeCryptKey } from "./composables/useLocal"
 
+import { listen } from "@tauri-apps/api/event"
+
 const salt = useStorage("rocox-dev-salt", "")
 const password = useStorage("rocox-dev-password", "")
 const useDev = useStorage("rocox-dev-tools-state", false)
@@ -25,12 +27,28 @@ function titleUpdateFn(change: string) {
 }
 provide(UpdateTitleFunctionalKey, { titleUpdateFn })
 
-onMounted(() => {
+interface Payload {
+	key: string
+	action: string
+}
+
+onMounted(async () => {
 	useDev.value = useDeCryptKey(salt.value, password.value)
 	if (useDev.value)
 		nextTick(() => {
 			isOpenModelDialog.value = false
 		})
+
+	// await invoke("use_keytools")
+	const unlisten = async () => {
+		return await listen<Payload>("key", (event) => {
+			console.log(
+				`Event: ${event.event} #${event.payload!.key}/${event.payload.action}`
+			)
+		})
+	}
+
+	unlisten()
 })
 </script>
 
