@@ -13,6 +13,9 @@ import {
 	SkillListData,
 	SkillListParma,
 	Collections,
+	SkillListItemObject,
+	ItemListItemObject,
+	AngelListItemObject,
 } from "../share"
 
 const $UserCollections = useStorage<Collections>(
@@ -110,7 +113,7 @@ export const useApi = () => {
 			($UserCollections.value.get("GetAngelList") ?? 0) + 1
 		)
 
-		return response.data.data
+		return response.ok ? response.data.data : ([] as AngelListItemObject[])
 	}
 
 	// Angel Detail
@@ -125,7 +128,7 @@ export const useApi = () => {
 			($UserCollections.value.get("GetAngel") ?? 0) + 1
 		)
 
-		return response.data.data
+		return response.ok ? response.data.data : ({} as AngelDetailObject["data"])
 	}
 
 	// Item List
@@ -143,7 +146,7 @@ export const useApi = () => {
 			($UserCollections.value.get("GetItemList") ?? 0) + 1
 		)
 
-		return response.data.data
+		return response.ok ? response.data.data : ([] as ItemListItemObject[])
 	}
 
 	// Angel Skill List
@@ -162,7 +165,7 @@ export const useApi = () => {
 			($UserCollections.value.get("GetSkillList") ?? 0) + 1
 		)
 
-		return response.data.data
+		return response.ok ? response.data.data : ([] as SkillListItemObject[])
 	}
 
 	// Skill Detail

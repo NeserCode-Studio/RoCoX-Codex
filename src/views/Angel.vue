@@ -4,7 +4,7 @@ import ChainItem from "../components/ChainItem.vue"
 import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue"
 
-import { Ref, ref, watch } from "vue"
+import { Ref, nextTick, ref, watch } from "vue"
 import { computedAsync, useStorage } from "@vueuse/core"
 import { useRoute, useRouter } from "vue-router"
 import { useApi } from "../composables/useApi"
@@ -33,14 +33,37 @@ function getSelectedTabClass(selectedIndex: number, index: number) {
 }
 
 const angelIconHashMap = useStorage("rocox-angel-icon-hash-map", new Map())
+const angleTabSetter = useStorage("rocox-angel-tab-setter", {
+	id: 0,
+	tab: 0,
+})
+const tab = ref(0)
 
 const isLoadingData = ref(true)
 watch(angelData, (_val) => {
-	isLoadingData.value = false
-	// Storage icon hash
-	angelIconHashMap.value.set(angelData.value.angel.hash, getIconSrc())
-	// console.log(_val)
+	nextTick(() => {
+		isLoadingData.value = false
+		// Storage icon hash
+		angelIconHashMap.value.set(angelData.value.angel.hash, getIconSrc())
+		// Init tab
+		if (
+			angleTabSetter.value.id === parseInt(angelData.value.angel.id as string)
+		) {
+			tab.value = angleTabSetter.value.tab
+		} else {
+			angleTabSetter.value.id = parseInt(angelData.value.angel.id as string)
+			tab.value = 0
+		}
+
+		// console.log(_val)
+	})
 })
+const changeTab = (index: number) => {
+	console.log(index)
+
+	tab.value = index
+	angleTabSetter.value.tab = index
+}
 
 const isShowTalentFix = ref(false)
 function toggleTalentFix() {
@@ -89,8 +112,8 @@ function goSkillView(hash: string) {
 		<div class="details">
 			<img
 				class="angel-img"
-				v-if="angelData.angel.img"
-				:src="angelData.angel.img"
+				v-if="angelData.angel.highUrl"
+				:src="angelData.angel.highUrl"
 				alt="Angel Image"
 				draggable="false"
 				loading="lazy"
@@ -174,7 +197,12 @@ function goSkillView(hash: string) {
 			</span>
 		</div>
 		<div class="info-tab">
-			<TabGroup class="flex tab-group" as="div">
+			<TabGroup
+				class="flex tab-group"
+				as="div"
+				:selectedIndex="tab"
+				@change="changeTab"
+			>
 				<TabList class="tab-list" v-slot="{ selectedIndex }">
 					<Tab :class="['tab', getSelectedTabClass(selectedIndex, 0)]"
 						>资料</Tab
@@ -236,18 +264,21 @@ function goSkillView(hash: string) {
 								:key="skill.id"
 								@click="setupWindowParams(skill.id!, skill.name!, skill.hash!)"
 							>
-								<span class="id">#{{ skill.id }}</span>
-								<span class="name">{{ skill.name }}</span>
-								<span class="skill-details">
-									<img
-										class="feature icon"
-										:src="getFeatureIconSrc(skill.property!)"
-										alt="skill property"
-										draggable="false"
-									/>
-									<span class="pp">{{ skill.ppMax }}</span> ·
-									<span class="power">{{ skill.power }}</span>
+								<span class="skill-info">
+									<span class="id">#{{ skill.id }}</span>
+									<span class="name">{{ skill.name }}</span>
+									<span class="skill-details">
+										<img
+											class="feature icon"
+											:src="getFeatureIconSrc(skill.property!)"
+											alt="skill property"
+											draggable="false"
+										/>
+										<span class="pp">{{ skill.ppMax }}</span> ·
+										<span class="power">{{ skill.power }}</span>
+									</span>
 								</span>
+								<span class="skill-analysis">{{ skill.description }}</span>
 							</span>
 						</div>
 					</TabPanel>
@@ -314,90 +345,124 @@ function goSkillView(hash: string) {
 }
 .tab-panel {
 	@apply w-96 inline-flex
-	rounded overflow-hidden outline-none transition-all;
+	overflow-hidden outline-none transition-all;
 }
 </style>
 <style lang="postcss" scoped>
 .names {
 	@apply inline-flex w-2/3 py-2 items-center justify-center mt-4
 	border-2 border-slate-400 bg-green-200 dark:border-slate-300 dark:bg-green-600
-	truncate transition-all rounded-full font-black select-none;
+	truncate transition-all rounded-md font-black select-none;
+
+	@apply sm:text-lg;
 }
 .names .features {
-	@apply inline-flex mx-2 items-center;
+	@apply inline-flex mx-2 gap-2 items-center;
 }
 .features .icon {
-	@apply w-6 h-6 inline-block mx-1;
+	@apply w-5 h-5 inline-block;
+
+	@apply sm:w-6 sm:h-6;
 }
 .go-back {
 	@apply left-8;
 }
 
 .details {
-	@apply w-full inline-flex justify-center items-center px-4
+	@apply w-full inline-flex justify-center items-center px-2
 	select-none;
+
+	@apply sm:px-6;
 }
 
 .angel-img {
 	@apply w-48 my-4
-	rounded overflow-hidden;
+	overflow-hidden;
+
+	@apply sm:w-72;
 }
 .angel-img.icon {
 	@apply p-8;
+
+	@apply sm:p-12;
 }
 
 .powers {
-	@apply w-1/2 inline-flex items-center justify-evenly flex-wrap p-4
+	@apply w-1/2 inline-flex items-center justify-evenly flex-wrap p-1
 	select-none;
+
+	@apply sm:w-2/5;
 }
 .power-item {
 	@apply relative w-[45%] my-0.5 px-2 py-1 inline-flex justify-between items-center
 	border-2 rounded-full overflow-hidden
 	border-slate-300 bg-slate-200 dark:border-slate-600 dark:bg-slate-500
 	transition-all text-sm font-semibold;
+
+	@apply sm:text-base sm:py-1.5;
+}
+.power-item.id {
+	@apply font-mono;
 }
 .power-item .icon {
 	@apply inline-block w-5 h-5;
+
+	@apply sm:w-6 sm:h-6;
 }
 
 .power-item.id .icon {
-	@apply absolute w-7 h-7 right-0;
+	@apply absolute w-9 h-9 right-0;
 }
 
 .info-main,
 .skill-main,
 .talent-main,
 .chain-main {
-	@apply max-h-40 w-full flex flex-wrap justify-center
+	@apply max-h-60 w-full flex flex-wrap justify-center gap-2
 	transition-all overflow-auto snap-y snap-mandatory;
+
+	@apply sm:max-h-full;
+}
+.skill-main {
+	@apply sm:flex-col sm:justify-start sm:max-h-96 sm:flex-nowrap sm:px-4;
 }
 .info-item,
 .skill-item,
 .talent-item {
-	@apply w-fit inline-flex items-center justify-center my-0.5 px-1 py-0.5 mx-0.5
-	border border-slate-400 dark:border-slate-300
-	bg-slate-100 dark:bg-slate-600
+	@apply w-fit inline-flex items-center justify-center px-1 py-0.5
+	border border-slate-500 bg-slate-100 dark:bg-slate-600
 	transition-all rounded text-sm font-semibold snap-start;
+
+	@apply sm:max-h-full sm:px-2 sm:py-1.5;
 }
 
 .skill-item {
 	@apply hover:bg-slate-200 dark:hover:bg-slate-500
 	active:bg-slate-300 dark:active:bg-slate-400
 	cursor-pointer;
+
+	@apply sm:w-full sm:mx-0 sm:flex-col sm:justify-start sm:items-start;
+}
+.skill-info {
+	@apply w-full inline-flex items-center;
+
+	@apply sm:justify-start;
 }
 
 .skill-item .icon {
-	@apply inline-block w-3 h-3 mr-0.5;
+	@apply inline-block w-4 h-4;
 }
 .skill-item .id {
-	@apply inline-block mr-0.5
-	text-xs;
+	@apply inline-block mr-1
+	font-mono opacity-60;
 }
 .skill-details {
-	@apply inline-flex items-center ml-0.5 px-1 py-px
-	border border-green-500 bg-green-200 dark:bg-green-700
-	rounded-sm box-content
+	@apply inline-flex items-center px-1 gap-1 ml-1
+bg-green-200 dark:bg-green-700
+	rounded
 	text-xs font-black transition-all;
+
+	@apply sm:py-1;
 }
 .skill-details .pp {
 	@apply text-blue-600 dark:text-blue-200
@@ -407,6 +472,10 @@ function goSkillView(hash: string) {
 	@apply text-red-500 dark:text-red-300
 	transition-all;
 }
+.skill-analysis {
+	@apply hidden;
+	@apply sm:inline-flex sm:items-center sm:opacity-75;
+}
 
 .talent-item {
 	@apply flex-col items-start;
@@ -414,6 +483,9 @@ function goSkillView(hash: string) {
 .talent-details {
 	@apply inline-flex items-center
 	text-base;
+}
+.talent-details .id {
+	@apply font-mono opacity-60;
 }
 .talent-details .icon {
 	@apply inline-block w-8 h-8 m-1;

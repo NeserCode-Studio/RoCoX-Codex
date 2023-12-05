@@ -37,10 +37,15 @@
 		"windows": [
 			{
 				"fullscreen": false,
+				"maximizable": false,
 				"resizable": false,
 				"title": "RoCox Codex",
 				"width": 500,
 				"height": 600,
+				"minWidth": 500,
+				"minHeight": 600,
+				"maxWidth": 850,
+				"maxHeight": 900,
 				"decorations": false,
 				"visible": false
 			}

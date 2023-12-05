@@ -65,7 +65,7 @@ watch(listData, (val: any[]) => {
 		<div class="item-card" v-for="item in listData" :key="item.id!">
 			<span class="name-text">
 				<span class="id">#{{ item.id }}</span>
-				<span class="inline-block mx-1 font-bold"> · </span>
+				<span class="inline-block mx-1 font-bold"> </span>
 				<span class="name">{{ item.name }}</span>
 			</span>
 			<span class="details">
@@ -105,19 +105,27 @@ watch(listData, (val: any[]) => {
 
 <style lang="postcss" scoped>
 .item-list-main {
-	@apply flex flex-wrap w-96 mt-8 h-[22rem] items-start justify-center content-start
+	@apply flex flex-col w-96 h-full mt-8 min-h-[20rem] max-h-[22rem] px-2 gap-2
+	items-center content-start
   overflow-auto select-none snap-y snap-mandatory;
+
+	@apply sm:min-h-[36rem] sm:max-h-[40rem];
 }
 
 .item-card {
-	@apply inline-flex flex-col items-center justify-center max-w-xs mb-0.5
-	snap-start;
+	@apply inline-flex flex-col items-center justify-center p-2 pt-0
+	border-2 rounded border-slate-300 dark:border-slate-600
+	snap-start transition-all ease-in-out duration-300;
 }
 
 .name-text {
 	@apply inline-flex w-full items-center justify-start my-1
   font-bold text-sm;
 }
+.name-text .id {
+	@apply font-mono opacity-60;
+}
+
 .details {
 	@apply inline-flex w-full items-center justify-center;
 }
@@ -137,9 +145,7 @@ watch(listData, (val: any[]) => {
 .text .price,
 .text .desc {
 	@apply inline-flex items-center h-fit px-1 py-0.5 mr-1 mb-1
-	text-gray-700 dark:text-gray-300
-	border-slate-300 dark:border-slate-600
-  border-2 rounded text-sm font-bold text-opacity-75 dark:text-opacity-75
+	text-sm font-bold opacity-75
 	transition-all;
 }
 .text .desc {

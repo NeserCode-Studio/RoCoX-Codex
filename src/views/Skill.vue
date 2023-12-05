@@ -40,7 +40,7 @@ function toggleSkillFix() {
 const isLoadingData = ref(true)
 watch(skillData, (_val) => {
 	isLoadingData.value = false
-	// console.log(_val)
+	console.log(_val)
 })
 
 const $router = useRouter()
@@ -103,7 +103,7 @@ function goAngelView(hash: string) {
 			</span>
 			<span class="detail-item angels">
 				<span class="prefix"
-					>拥有此技能的精灵 · {{ skillData.angel!.length }}</span
+					>拥有此技能的精灵 · {{ skillData.AngelLength }}</span
 				>
 				<span
 					v-for="angel in skillData.angel"

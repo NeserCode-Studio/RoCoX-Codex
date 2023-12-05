@@ -56,6 +56,7 @@ watch(listData, (val: any[]) => {
 		pageSize: pageSize.value,
 		total: totalFromID.value,
 	})
+	// console.log(val)
 })
 
 const $router = useRouter()
@@ -135,12 +136,16 @@ function goSkillView(hash: string) {
 
 <style lang="postcss" scoped>
 .skill-list-main {
-	@apply flex flex-wrap w-full mt-8 h-[22rem] items-start justify-center content-start
+	@apply flex flex-wrap w-full h-full mt-8 min-h-[20rem] max-h-[22rem] gap-2
+	items-start justify-center content-start
   overflow-auto snap-y snap-mandatory;
+
+	@apply sm:w-2/3 sm:min-h-[36rem] sm:max-h-[40rem]
+	sm:justify-evenly sm:items-center;
 }
 
 .skill-card {
-	@apply flex flex-col mb-1 mr-1
+	@apply w-[47%] flex flex-col
   border-2 border-slate-200 dark:border-slate-600
   hover:bg-slate-100 active:bg-slate-200 active:border-slate-300
   dark:hover:bg-slate-600 dark:active:bg-slate-800 dark:active:border-slate-600
@@ -150,30 +155,38 @@ function goSkillView(hash: string) {
 .skill-card .name-text {
 	@apply inline-flex items-center justify-between
   font-semibold text-sm;
+
+	@apply sm:text-base;
 }
 .name-text .id {
-	@apply inline-block ml-1 mr-2;
+	@apply inline-block ml-1 mr-2
+	font-mono opacity-60;
 }
 .name-text .name {
-	@apply inline-block ml-2 mr-1;
+	@apply inline-block ml-2 mr-1
+	font-black;
 }
 
 .skill-card .details {
 	@apply inline-flex items-center justify-between;
 }
 .details .icons {
-	@apply inline-block ml-1 mr-2;
+	@apply inline-block mr-2;
 }
 .details .text {
 	@apply inline-block ml-2 mr-1
   font-semibold text-sm;
+
+	@apply sm:text-base;
 }
 
 .icons .icon {
-	@apply w-6 h-6 inline-block my-1 ml-1 p-1
+	@apply w-6 h-6 inline-block mb-1 ml-1 p-1
   border rounded
   bg-slate-200 dark:bg-slate-600 border-slate-400 dark:border-slate-500
   overflow-hidden transition-all;
+
+	@apply sm:w-7 sm:h-7 sm:p-0.5;
 }
 .icon.damage {
 	@apply p-0;

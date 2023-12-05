@@ -21,7 +21,7 @@ const slideDirection = useStorage(
 	"slideleft"
 )
 
-const title = ref("RocoKindom Codex")
+const title = ref("RocoKingdom Codex")
 function titleUpdateFn(change: string) {
 	title.value = change
 }
@@ -82,10 +82,10 @@ html.dark {
 	@apply w-2;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-	@apply bg-slate-200 dark:bg-slate-600;
+	@apply rounded-full bg-slate-200 dark:bg-slate-600;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-	@apply bg-slate-400 shadow;
+	@apply rounded-full bg-slate-400;
 }
 </style>
 
@@ -125,7 +125,7 @@ html.dark {
 
 <style scoped lang="postcss">
 #app-main {
-	@apply relative w-[500px] min-h-[600px]
+	@apply relative w-full min-h-screen
 	border border-slate-400
 	bg-slate-50 dark:bg-slate-700
 	text-slate-700 dark:text-slate-100
@@ -136,6 +136,8 @@ html.dark {
 }
 
 #context {
-	@apply relative flex w-full min-h-[502px] flex-col justify-start items-center px-4;
+	@apply relative flex w-full h-full min-h-[31rem] flex-col justify-start items-center px-4;
+
+	@apply sm:px-12 sm:min-h-[50rem];
 }
 </style>

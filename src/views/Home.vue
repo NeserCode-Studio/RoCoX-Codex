@@ -128,6 +128,8 @@ function pageUpdateFn(page: number) {
 
 <style lang="postcss" scoped>
 .filters {
-	@apply w-full inline-flex justify-evenly;
+	@apply w-full inline-flex justify-center gap-2;
+
+	@apply sm:gap-6;
 }
 </style>

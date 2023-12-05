@@ -1,4 +1,10 @@
-import { WebviewWindow, WindowOptions } from "@tauri-apps/api/window"
+import {
+	WebviewWindow,
+	WindowOptions,
+	LogicalSize,
+	appWindow,
+} from "@tauri-apps/api/window"
+import { useStorage } from "@vueuse/core"
 
 export class WindowCreator {
 	private label: string = "DefaultLabel"
@@ -36,4 +42,27 @@ export class WindowCreator {
 			await WebviewWindow.getByLabel(e.windowLabel)!.setFocus()
 		})
 	}
+}
+
+export const toggleMiniWindow = async (symbol?: boolean) => {
+	const boundings = [
+		{
+			width: 500,
+			height: 600,
+		},
+		{
+			width: 850,
+			height: 900,
+		},
+	]
+
+	const isMini = useStorage("rocox-mini", true)
+	let size =
+		symbol !== undefined
+			? boundings[symbol ? 1 : 0]
+			: boundings[isMini.value ? 0 : 1]
+
+	await appWindow.setSize(new LogicalSize(size.width, size.height))
+	if (symbol !== undefined) isMini.value = symbol
+	else isMini.value = !isMini.value
 }

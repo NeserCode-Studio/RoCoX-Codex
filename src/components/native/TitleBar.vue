@@ -5,14 +5,16 @@ import {
 	SunIcon,
 	MoonIcon,
 	PaperClipIcon,
+	Square2StackIcon,
 } from "@heroicons/vue/20/solid"
-import { ref, onMounted, toRefs, watch } from "vue"
+import { ref, onMounted, toRefs, watch, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useStorage, useThrottleFn } from "@vueuse/core"
 
 import { appWindow } from "@tauri-apps/api/window"
 
 import { useDarkMode } from "../../composables/useDarkMode"
+import { toggleMiniWindow } from "../../composables/useWindow"
 import { register, unregisterAll } from "@tauri-apps/api/globalShortcut"
 import { Collections } from "../../share"
 
@@ -30,6 +32,7 @@ const $router = useRouter()
 
 const title = ref("Rocox Codex")
 const isAlwaysonTop = useStorage("rocox-always-on-top", false)
+const isMini = useStorage("rocox-mini", true)
 const category = useStorage("rocox-category", "angels")
 const categoryNameMap = new Map([
 	["angels", "精灵"],
@@ -69,13 +72,17 @@ watch(category, (_route) => {
 	updateTitle()
 })
 
-function getIspinnedClass() {
+const ispinnedClass = computed(() => {
 	return isAlwaysonTop.value ? "pinned" : null
-}
+})
+const miniClass = computed(() => {
+	return isMini.value ? "mini" : null
+})
 
 // Initial top
 onMounted(async () => {
 	await appWindow.setAlwaysOnTop(isAlwaysonTop.value)
+	await toggleMiniWindow(isMini.value)
 })
 
 async function toggleIspinned() {
@@ -84,6 +91,9 @@ async function toggleIspinned() {
 }
 const throttleToggleIspinned = useThrottleFn(() => {
 	toggleIspinned()
+}, 800)
+const throttleToggleMini = useThrottleFn(async () => {
+	toggleMiniWindow()
 }, 800)
 
 function minimize() {
@@ -153,19 +163,24 @@ onMounted(async () => {
 <template>
 	<div id="app-title-bar" data-tauri-drag-region>
 		<span class="title" data-tauri-drag-region>
-			<!-- <span class="icon" data-tauri-drag-region>
-				<img src="../../assets/hf.jpg" alt="!@" />
-			</span> -->
 			<span data-tauri-drag-region>{{ title }} · RoCoX Codex</span>
 		</span>
 		<div class="buttons" data-tauri-drag-region>
 			<span
-				:class="['btn', 'pin', getIspinnedClass()]"
+				:class="['btn', 'pin', ispinnedClass]"
 				@mouseenter="addMoveClass"
 				@mouseleave="removeMoveClass"
 				@click="throttleToggleIspinned"
 			>
 				<PaperClipIcon class="icon" />
+			</span>
+			<span
+				:class="['btn', 'screen', miniClass]"
+				@mouseenter="addMoveClass"
+				@mouseleave="removeMoveClass"
+				@click="throttleToggleMini"
+			>
+				<Square2StackIcon class="icon" />
 			</span>
 			<span
 				class="btn darkmode"
@@ -239,11 +254,19 @@ onMounted(async () => {
 	@apply w-5 p-1 transition-all
 	rounded scale-125;
 }
-.moving .icon {
+.pin.moving .icon {
 	@apply rotate-[135deg];
 }
 
 .pin.pinned .icon {
 	@apply bg-slate-600 text-slate-100 rotate-[135deg] scale-100;
+}
+
+.screen {
+	@apply w-10 p-0;
+}
+.screen .icon {
+	@apply w-5 p-1 transition-all
+	rounded scale-125;
 }
 </style>
