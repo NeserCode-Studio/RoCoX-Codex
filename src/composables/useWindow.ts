@@ -59,7 +59,7 @@ export const toggleMiniWindow = async (symbol?: boolean) => {
 	const isMini = useStorage("rocox-mini", true)
 	let size =
 		symbol !== undefined
-			? boundings[symbol ? 1 : 0]
+			? boundings[symbol ? 0 : 1]
 			: boundings[isMini.value ? 0 : 1]
 
 	await appWindow.setSize(new LogicalSize(size.width, size.height))

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import GoBack from "../components/native/GoBack.vue"
 import ChainItem from "../components/ChainItem.vue"
+import AngelPowerChart from "../components/AngelPowerChart.vue"
 import { CubeTransparentIcon } from "@heroicons/vue/20/solid"
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue"
 
@@ -59,8 +60,6 @@ watch(angelData, (_val) => {
 	})
 })
 const changeTab = (index: number) => {
-	console.log(index)
-
 	tab.value = index
 	angleTabSetter.value.tab = index
 }
@@ -92,6 +91,11 @@ function goSkillView(hash: string) {
 			params: { hash },
 		})
 }
+
+const isSimplePower = useStorage("rocox-simple-power", true)
+const togglePowerStyle = () => {
+	isSimplePower.value = !isSimplePower.value
+}
 </script>
 
 <template>
@@ -108,6 +112,10 @@ function goSkillView(hash: string) {
 				/>
 			</span>
 			<span class="name">{{ angelData.angel.name }}</span>
+			<span class="power-switch" @click="togglePowerStyle">
+				<span class="simple" v-if="isSimplePower">简约</span>
+				<span class="chart" v-else>雷达</span>
+			</span>
 		</span>
 		<div class="details">
 			<img
@@ -119,7 +127,7 @@ function goSkillView(hash: string) {
 				loading="lazy"
 			/>
 			<CubeTransparentIcon v-else class="icon angel-img" />
-			<span class="powers">
+			<span class="powers" v-if="isSimplePower">
 				<span class="id power-item" title="编号">
 					<span class="icon">
 						<img draggable="false" :src="getIconSrc()" alt="angel icon" />
@@ -195,6 +203,7 @@ function goSkillView(hash: string) {
 					<span class="value">{{ angelData.angel.sd }}</span></span
 				>
 			</span>
+			<AngelPowerChart :angel="angelData.angel" v-else />
 		</div>
 		<div class="info-tab">
 			<TabGroup
@@ -350,9 +359,9 @@ function goSkillView(hash: string) {
 </style>
 <style lang="postcss" scoped>
 .names {
-	@apply inline-flex w-2/3 py-2 items-center justify-center mt-4
-	border-2 border-slate-400 bg-green-200 dark:border-slate-300 dark:bg-green-600
-	truncate transition-all rounded-md font-black select-none;
+	@apply relative inline-flex w-2/3 py-2 items-center justify-center mt-4
+	bg-green-200 dark:bg-green-600
+	transition-all rounded-md font-black select-none;
 
 	@apply sm:text-lg;
 }
@@ -366,6 +375,13 @@ function goSkillView(hash: string) {
 }
 .go-back {
 	@apply left-8;
+}
+.power-switch {
+	@apply absolute inline-flex -right-[6ch] items-center py-0.5 px-1 gap-1
+	rounded bg-green-300 dark:bg-green-600
+	text-sm;
+
+	@apply sm:-right-[8ch] sm:text-base;
 }
 
 .details {
@@ -424,7 +440,10 @@ function goSkillView(hash: string) {
 	@apply sm:max-h-full;
 }
 .skill-main {
-	@apply sm:flex-col sm:justify-start sm:max-h-96 sm:flex-nowrap sm:px-4;
+	@apply sm:max-h-96 sm:flex-col sm:justify-start sm:flex-nowrap sm:px-4;
+}
+.talent-main {
+	@apply sm:max-h-96 sm:flex-col sm:justify-start sm:items-start sm:flex-nowrap sm:px-4;
 }
 .info-item,
 .skill-item,
@@ -433,7 +452,7 @@ function goSkillView(hash: string) {
 	border border-slate-500 bg-slate-100 dark:bg-slate-600
 	transition-all rounded text-sm font-semibold snap-start;
 
-	@apply sm:max-h-full sm:px-2 sm:py-1.5;
+	@apply sm:px-2 sm:py-1.5;
 }
 
 .skill-item {

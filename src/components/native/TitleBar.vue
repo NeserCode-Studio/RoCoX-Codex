@@ -93,7 +93,7 @@ const throttleToggleIspinned = useThrottleFn(() => {
 	toggleIspinned()
 }, 800)
 const throttleToggleMini = useThrottleFn(async () => {
-	toggleMiniWindow()
+	await toggleMiniWindow(!isMini.value)
 }, 800)
 
 function minimize() {
@@ -218,6 +218,8 @@ onMounted(async () => {
 	bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-200
 	transition-all
   select-none;
+
+	z-index: 99999999;
 }
 
 .title {
