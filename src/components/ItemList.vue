@@ -58,10 +58,16 @@ watch(listData, (val: any[]) => {
 	})
 	console.log(listData.value)
 })
+
+// Auto-scroll to the top of the page when the page is loaded.
+const container = ref<HTMLElement | null>(null)
+watch(page, () => {
+	if (container.value) container.value.scrollTop = 0
+})
 </script>
 
 <template>
-	<div class="item-list-main custom-scrollbar">
+	<div class="item-list-main custom-scrollbar" ref="container">
 		<div class="item-card" v-for="item in listData" :key="item.id!">
 			<span class="name-text">
 				<span class="id">#{{ item.id }}</span>
@@ -84,8 +90,8 @@ watch(listData, (val: any[]) => {
 					>
 					<span class="price">售价 · {{ item.Price }}</span>
 					<span class="desc"
-						>描述 · {{ item.Desc ?? "这是一段空白的描述" }}</span
-					>
+						>描述 · <span v-html="item.Desc ?? '这是一段空白的描述'"></span
+					></span>
 				</span>
 			</span>
 		</div>
@@ -113,7 +119,7 @@ watch(listData, (val: any[]) => {
 }
 
 .item-card {
-	@apply inline-flex flex-col items-center justify-center p-2 pt-0
+	@apply inline-flex flex-col w-full items-center justify-center p-2 pt-0
 	border-2 rounded border-slate-300 dark:border-slate-600
 	snap-start transition-all ease-in-out duration-300;
 }
@@ -127,7 +133,7 @@ watch(listData, (val: any[]) => {
 }
 
 .details {
-	@apply inline-flex w-full items-center justify-center;
+	@apply inline-flex w-full items-center justify-start;
 }
 .details .icon {
 	@apply inline-flex justify-center items-center w-16 h-fit box-content mr-1
@@ -146,7 +152,7 @@ watch(listData, (val: any[]) => {
 .text .desc {
 	@apply inline-flex items-center h-fit px-1 py-0.5 mr-1 mb-1
 	text-sm font-bold opacity-75
-	transition-all;
+	transition-all whitespace-pre-line;
 }
 .text .desc {
 	@apply w-full mb-0;

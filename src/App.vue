@@ -60,7 +60,7 @@ onMounted(async () => {
 
 		<router-view id="context" v-slot="{ Component }">
 			<Transition :name="slideDirection" mode="out-in" :appear="true">
-				<keep-alive :include="['Home', 'About']">
+				<keep-alive :include="['Home', 'About', 'Help']">
 					<component :is="Component" :key="$route.fullPath" />
 				</keep-alive>
 			</Transition>

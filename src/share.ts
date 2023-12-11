@@ -184,3 +184,9 @@ export type Collections = Map<
 	| "KeyShortCut",
 	number
 >
+
+export interface Help {
+	id: number
+	question: string
+	answer: string
+}

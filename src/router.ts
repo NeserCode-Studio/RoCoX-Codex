@@ -15,6 +15,12 @@ const routes: Array<RouteRecordRaw> = [
 		component: () => import("./views/About.vue"),
 	},
 	{
+		path: "/help",
+		name: "Help",
+		meta: {},
+		component: () => import("./views/Help.vue"),
+	},
+	{
 		path: "/angel/:hash",
 		name: "Angel",
 		meta: {

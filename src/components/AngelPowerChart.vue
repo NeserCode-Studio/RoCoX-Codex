@@ -46,8 +46,12 @@ const chartValues = computed(() => [
 	angel.value.sm,
 	angel.value.sd,
 ])
+const powerLimit = computed(() =>
+	parseInt(angel.value.id ?? "99999") > 10000 ? 300 : 200
+)
 const optTitleColor = computed(() => (isDarkMode.value ? "#ccc" : "#333"))
 const optTextColor = computed(() => (isDarkMode.value ? "#aaa" : "#555"))
+const optBorderColor = computed(() => (isDarkMode.value ? "#666" : "#ccc"))
 const optBlurBg = computed(() =>
 	isDarkMode.value ? "rgba(32, 32, 32, 0.5)" : "rgba(255, 255, 255, 0.5)"
 )
@@ -77,12 +81,42 @@ const opt = computed(() => ({
 		nameGap: 5,
 		slient: true,
 		indicator: [
-			{ name: `物攻`, min: 0, max: 200, color: optTextColor.value },
-			{ name: `魔攻`, min: 0, max: 200, color: optTextColor.value },
-			{ name: `物抗`, min: 0, max: 200, color: optTextColor.value },
-			{ name: `魔抗`, min: 0, max: 200, color: optTextColor.value },
-			{ name: `精力`, min: 0, max: 200, color: optTextColor.value },
-			{ name: `速度`, min: 0, max: 200, color: optTextColor.value },
+			{
+				name: `物攻`,
+				min: 0,
+				max: powerLimit.value,
+				color: optTextColor.value,
+			},
+			{
+				name: `魔攻`,
+				min: 0,
+				max: powerLimit.value,
+				color: optTextColor.value,
+			},
+			{
+				name: `物抗`,
+				min: 0,
+				max: powerLimit.value,
+				color: optTextColor.value,
+			},
+			{
+				name: `魔抗`,
+				min: 0,
+				max: powerLimit.value,
+				color: optTextColor.value,
+			},
+			{
+				name: `精力`,
+				min: 0,
+				max: powerLimit.value,
+				color: optTextColor.value,
+			},
+			{
+				name: `速度`,
+				min: 0,
+				max: powerLimit.value,
+				color: optTextColor.value,
+			},
 		],
 		axisLine: {
 			show: false,
@@ -90,7 +124,7 @@ const opt = computed(() => ({
 		splitLine: {
 			show: true,
 			lineStyle: {
-				color: optTextColor.value,
+				color: optBorderColor.value,
 				width: 2,
 			},
 		},

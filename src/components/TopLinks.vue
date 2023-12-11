@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-import { BookOpenIcon, QuestionMarkCircleIcon } from "@heroicons/vue/20/solid"
+import {
+	BookOpenIcon,
+	QuestionMarkCircleIcon,
+	LightBulbIcon,
+} from "@heroicons/vue/20/solid"
 import Menu from "./native/Menu.vue"
 import GoBack from "./native/GoBack.vue"
 import { computed, onMounted } from "vue"
@@ -8,7 +12,7 @@ import { useStorage } from "@vueuse/core"
 import { nextTickToShow } from "../composables/useLocal"
 
 const $route = useRoute()
-const shouldShowLinksPath = ["home", "about"]
+const shouldShowLinksPath = ["home", "about", "help"]
 const hasActivedLink = computed(() => {
 	return shouldShowLinksPath.includes(
 		(($route.name as string) ?? "").toLowerCase()
@@ -40,6 +44,10 @@ onMounted(() => {
 			<RouterLink draggable="false" class="link" to="/">
 				<BookOpenIcon class="icon" />
 				<span class="text">{{ getMatchCategoryName() }}</span>
+			</RouterLink>
+			<RouterLink draggable="false" class="link" to="/help">
+				<LightBulbIcon class="icon" />
+				<span class="text">帮助</span>
 			</RouterLink>
 			<RouterLink draggable="false" class="link" to="/about">
 				<QuestionMarkCircleIcon class="icon" />

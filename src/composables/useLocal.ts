@@ -17,6 +17,8 @@ export function nextTickToShow() {
 
 export function useDeCryptKey(salt: string, password: string) {
 	// return Base64.stringify(HmacSHA512(sha256(password), salt)) // use in dev, product use below
+	// console.log(Base64.stringify(HmacSHA512(sha256("RoCoX Codex"), "NCS.RoCoX")))
+
 	return (
 		$DevCryptKey ===
 		Base64.stringify(HmacSHA512(sha256(password), salt)).toString()

@@ -81,10 +81,16 @@ function goSkillView(hash: string) {
 			params: { hash },
 		})
 }
+
+// Auto-scroll to the top of the page when the page is loaded.
+const container = ref<HTMLElement | null>(null)
+watch(page, () => {
+	if (container.value) container.value.scrollTop = 0
+})
 </script>
 
 <template>
-	<div class="skill-list-main custom-scrollbar">
+	<div class="skill-list-main custom-scrollbar" ref="container">
 		<div
 			class="skill-card"
 			v-for="skill in listData"

@@ -85,10 +85,16 @@ function goAngelView(hash: string) {
 			params: { hash },
 		})
 }
+
+// Auto-scroll to the top of the page when the page is loaded.
+const container = ref<HTMLElement | null>(null)
+watch(page, () => {
+	if (container.value) container.value.scrollTop = 0
+})
 </script>
 
 <template>
-	<div class="angel-list-main custom-scrollbar">
+	<div class="angel-list-main custom-scrollbar" ref="container">
 		<div
 			class="angel-card"
 			v-for="angel in listData"
