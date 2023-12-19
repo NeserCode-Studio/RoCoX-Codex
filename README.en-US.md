@@ -26,6 +26,25 @@ Currently in 1.0.0 and its beta versions of the software:
 - The function of the filter area is selected after you confirm the content of the book, including filtering of the confirmed guide, such as adding the filter condition of Water System to the Spirit Guide again to obtain a separate list of Water System Wizards. Of course, items are not subject to attribute filtering.
 - The list can visually see the displayed resources obtained after filtering.
 
-## IV. Thanks
+## IV. Change logs
+
+### V1.1.0.beta.2 Explanation of changes
+
+The following features are added in this release:
+
+- Added a larger display - Switching to "Care" mode will give you a larger view of the elements. Aside from the display differences, it doesn't have much functional difference from the original display mode.
+- Added a toggle display mode control button in the top bar to quickly switch between mini mode and "care" mode.
+- Added a memory feature to the Sprite Details tab, which will automatically select the last dwelling option when you enter until you get the details of the next sprite.
+- Added a new Race Radar Chart display option to the Elf Detail Card, now you can use the button in the top right corner to toggle between the Radar Chart to express the Elf's race value.
+- Added the Help page to list some common help information.
+
+This release fixes the following features,
+
+- Fixed the default rendering of sprite HD images with a white background.
+- Fixed rendering components when the request was invalid.
+- Fix the software icon.
+- Fixed some component UI logic and rendering.
+
+## V. Thanks
 
 [RocoTime Team](https://rocotime.com), [Roco Kingdom Official](https://17roco.com), and all game enthusiasts who use this software.

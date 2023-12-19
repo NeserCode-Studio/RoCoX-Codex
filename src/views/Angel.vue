@@ -443,7 +443,7 @@ const togglePowerStyle = () => {
 	@apply sm:max-h-96 sm:flex-col sm:justify-start sm:flex-nowrap sm:px-4;
 }
 .talent-main {
-	@apply sm:max-h-96 sm:flex-col sm:justify-start sm:items-start sm:flex-nowrap sm:px-4;
+	@apply sm:max-h-96 sm:flex-col sm:justify-start sm:items-center sm:flex-nowrap sm:px-4;
 }
 .info-item,
 .skill-item,

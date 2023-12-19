@@ -126,6 +126,9 @@ function goAngelView(hash: string) {
 .chain-item:has(> .chain-item) {
 	@apply inline-flex w-full items-center justify-between;
 }
+.chain-item:has(> .chain-children) {
+	@apply gap-2;
+}
 
 .chain-children {
 	@apply inline-flex flex-col justify-center items-center;

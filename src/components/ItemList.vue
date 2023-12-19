@@ -56,7 +56,7 @@ watch(listData, (val: any[]) => {
 		total: totalFromID.value,
 		canJump: false,
 	})
-	console.log(listData.value)
+	// console.log(listData.value)
 })
 
 // Auto-scroll to the top of the page when the page is loaded.

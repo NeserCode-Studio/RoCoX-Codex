@@ -30,7 +30,7 @@ const { titleText } = toRefs($props)
 const $route = useRoute()
 const $router = useRouter()
 
-const title = ref("Rocox Codex")
+const title = ref("Rocox")
 const isAlwaysonTop = useStorage("rocox-always-on-top", false)
 const isMini = useStorage("rocox-mini", true)
 const category = useStorage("rocox-category", "angels")
@@ -50,9 +50,22 @@ function updateTitle() {
 			routeNameMap.get($route.name as string)! +
 			" · " +
 			localStorage.getItem($route.meta.titleStorageKey as string)!
-	else
-		title.value =
-			$route.name === "Home" ? categoryNameMap.get(category.value)! : "关于"
+	else {
+		switch ($route.name) {
+			case "Home":
+				title.value = categoryNameMap.get(category.value)!
+				break
+			case "About":
+				title.value = "关于"
+				break
+			case "Help":
+				title.value = "帮助"
+				break
+			default:
+				title.value = $route.name as string
+				break
+		}
+	}
 }
 
 watch(
@@ -163,7 +176,7 @@ onMounted(async () => {
 <template>
 	<div id="app-title-bar" data-tauri-drag-region>
 		<span class="title" data-tauri-drag-region>
-			<span data-tauri-drag-region>{{ title }} · RoCoX Codex</span>
+			<span data-tauri-drag-region>{{ title }} · RoCoX</span>
 		</span>
 		<div class="buttons" data-tauri-drag-region>
 			<span
@@ -224,7 +237,7 @@ onMounted(async () => {
 
 .title {
 	@apply absolute inline-flex items-center top-1/2 left-2
-	text-sm font-bold
+	text-sm font-black
 	-translate-y-1/2;
 }
 

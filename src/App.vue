@@ -49,6 +49,20 @@ onMounted(async () => {
 	}
 
 	unlisten()
+	const injectPreventKey = ["u", "r", "f", "g"]
+	document.addEventListener("keydown", function (e) {
+		if (injectPreventKey.includes(e.key) && (e.ctrlKey || e.metaKey)) {
+			console.log(`[Inject Prevent Key]`, e.key)
+
+			e.preventDefault()
+		}
+	})
+	// Ctrl/Meta + Mouse
+	document.addEventListener("click", function (e) {
+		if (e.ctrlKey || e.metaKey) {
+			e.preventDefault()
+		}
+	})
 })
 </script>
 
@@ -136,8 +150,8 @@ html.dark {
 }
 
 #context {
-	@apply relative flex w-full h-full min-h-[31rem] flex-col justify-start items-center px-4;
+	@apply relative flex w-full h-full max-h-[34rem] flex-col justify-start items-center px-4;
 
-	@apply sm:px-12 sm:min-h-[50rem];
+	@apply sm:px-12 sm:max-h-[50rem];
 }
 </style>

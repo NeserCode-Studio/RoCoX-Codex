@@ -24,18 +24,11 @@ function getAngelIconSrc(iconSrc: string) {
 	return `${iconStaticURL}${iconSrc}`
 }
 
-const isShowSkillFix = ref(false)
 const skillFix = computed(() => {
 	const answer = skillData.value.data.analysis
-	if (answer !== undefined)
-		return `解析 ${answer.hit === "空" ? `` : `· ${answer.hit}`} · ${
-			answer.analysis
-		}`
-	else return `描述 · ${skillData.value.data.description}`
+	if (answer !== undefined) return `${answer.analysis}`
+	else return "暂无解析"
 })
-function toggleSkillFix() {
-	isShowSkillFix.value = !isShowSkillFix.value
-}
 
 const isLoadingData = ref(true)
 watch(skillData, (_val) => {
@@ -98,8 +91,30 @@ function goAngelView(hash: string) {
 			<span class="speed detail-item" title="速度值"
 				>速度 · {{ skillData.data.speed }}</span
 			>
-			<span class="description detail-item" @dblclick="toggleSkillFix">
-				{{ isShowSkillFix ? skillFix : `描述 · ${skillData.data.description}` }}
+			<span class="description detail-item">
+				{{ `描述 · ${skillData.data.description}` }}
+			</span>
+			<span class="analysis detail-item">
+				<span class="info" v-if="skillData.data.analysis">
+					<span class="prefix">解析</span>
+					<span class="author">{{ skillData.data.analysis.author }}</span>
+					<span class="time">{{ skillData.data.analysis.time }}</span>
+					<span class="hit">{{
+						skillData.data.analysis.hit === "空"
+							? ""
+							: skillData.data.analysis.hit
+					}}</span>
+					<span class="weathers" v-if="skillData.data.analysis.weather?.length"
+						>召唤{{ skillData.data.analysis.weather?.join("、") }}天气</span
+					>
+					<span class="tags" v-if="skillData.data.analysis.tag?.length">{{
+						skillData.data.analysis.tag?.join("、")
+					}}</span>
+					<span class="debuffs" v-if="skillData.data.analysis.debuff?.length"
+						>施加{{ skillData.data.analysis.debuff?.join("、") }}</span
+					>
+				</span>
+				<span class="text">{{ skillFix }}</span>
 			</span>
 			<span class="detail-item angels">
 				<span class="prefix"
@@ -146,8 +161,10 @@ function goAngelView(hash: string) {
 }
 
 .details {
-	@apply w-96 max-h-96 flex items-center justify-start flex-wrap mt-8
-	select-none overflow-auto;
+	@apply w-96 h-full max-h-[34rem] flex items-center justify-start flex-wrap mt-8
+	select-none overflow-auto transition-all ease-in-out;
+
+	@apply sm:w-2/3 sm:max-h-[50rem];
 }
 .detail-item {
 	@apply inline-flex items-center mb-1 mr-1 px-2 py-0.5
@@ -156,12 +173,29 @@ function goAngelView(hash: string) {
 	transition-all;
 }
 
+.analysis,
 .description {
-	@apply text-sm font-semibold;
+	@apply inline-flex flex-col items-start w-full text-sm font-bold;
+
+	@apply sm:text-base;
+}
+.analysis .info {
+	@apply inline-flex w-full items-center flex-wrap gap-1
+	text-xs font-black;
+
+	@apply sm:text-sm;
+}
+.info span {
+	@apply opacity-60;
+}
+.info .prefix {
+	@apply text-sm font-bold opacity-100;
+
+	@apply sm:text-base;
 }
 
 .angels {
-	@apply flex-wrap;
+	@apply w-fit flex-wrap;
 }
 .angels .prefix {
 	@apply inline-block w-full mb-0.5;

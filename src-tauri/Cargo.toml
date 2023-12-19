@@ -1,7 +1,7 @@
 [package]
 name = "rocox-codex"
-version = "1.0.0-beta.2"
-description = "Rocox Codex"
+version = "1.1.0-beta.2"
+description = "RoCoX Codex"
 authors = ["NeserCode"]
 license = "MIT"
 repository = ""
@@ -16,7 +16,6 @@ tauri-build = { version = "1.4", features = [] }
 tauri = { version = "1.4", features = [ "system-tray", "api-all", "devtools"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-rdev = "0.5.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

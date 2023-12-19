@@ -156,9 +156,6 @@ onMounted(() => {
 
 			nextTick(() => {
 				init()
-				chart.value?.on("mouseover", (data) => {
-					console.log(data)
-				})
 			})
 		},
 		{
