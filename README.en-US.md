@@ -28,7 +28,7 @@ Currently in 1.0.0 and its beta versions of the software:
 
 ## IV. Change logs
 
-### V1.1.0.beta.2 Explanation of changes
+### V1.1.0-beta.2 Explanation of changes
 
 The following features are added in this release:
 
