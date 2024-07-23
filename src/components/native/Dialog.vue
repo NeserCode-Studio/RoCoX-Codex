@@ -5,23 +5,22 @@ import {
 	Dialog,
 	DialogPanel,
 	DialogTitle,
-} from "@headlessui/vue"
-import { useStorage } from "@vueuse/core"
+} from '@headlessui/vue'
 
-const isOpen = defineModel<boolean>("isOpen", {
+const $props = withDefaults(
+	defineProps<{
+		close: () => void
+	}>(),
+	{
+		close: () => {},
+	}
+)
+const isOpen = defineModel<boolean>('isOpen', {
 	required: true,
 	default: false,
 })
-
-const salt = useStorage("rocox-dev-salt", "")
-const password = useStorage("rocox-dev-password", "")
-const useDev = useStorage("rocox-dev-tools-state", false)
-const isRoundedAvatar = useStorage("rocox-avatar-rounded", false)
-
-function closeModal() {
-	if (!useDev.value) {
-		isRoundedAvatar.value = false
-	}
+const closeModal = () => {
+	$props.close()
 	isOpen.value = false
 }
 </script>
@@ -38,7 +37,7 @@ function closeModal() {
 				leave-from="opacity-100"
 				leave-to="opacity-0"
 			>
-				<div class="fixed inset-0 bg-black bg-opacity-25" />
+				<div class="fixed inset-0 bg-black bg-opacity-25 dialog-backdrop" />
 			</TransitionChild>
 
 			<div class="fixed inset-0 overflow-y-auto cursor-not-allowed">
@@ -55,36 +54,20 @@ function closeModal() {
 						leave-to="opacity-0 scale-95"
 					>
 						<DialogPanel
-							class="w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-gray-100 shadow-xl cursor-default dark:bg-gray-600 rounded-2xl"
+							class="w-full max-w-md p-4 overflow-hidden text-left align-middle transition-all transform bg-gray-100 shadow-xl cursor-default dark:bg-gray-600 rounded-2xl"
 						>
 							<DialogTitle
-								as="h3"
-								class="text-lg font-medium leading-6 text-gray-900 transition-all dark:text-gray-100"
+								as="h2"
+								class="text-lg font-bold text-gray-900 transition-colors dark:text-gray-100"
 							>
-								启用开发者模式？
+								<slot name="title"></slot>
 							</DialogTitle>
 							<div class="mt-2">
 								<p
 									class="text-sm text-gray-600 transition-all dark:text-gray-400"
 								>
-									如果您不明白为何触发这部分内容，请无视内容直接点击确认。
+									<slot name="details"></slot>
 								</p>
-								<input
-									class="will-input salt"
-									type="text"
-									placeholder="SHA SALT"
-									name="salt"
-									id="salt"
-									v-model="salt"
-								/>
-								<input
-									class="will-input pwd"
-									type="password"
-									name="password"
-									placeholder="PASSWORD"
-									id="password"
-									v-model="password"
-								/>
 							</div>
 
 							<div class="mt-4">
@@ -93,7 +76,7 @@ function closeModal() {
 									class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 transition-all bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:bg-slate-400"
 									@click="closeModal"
 								>
-									确认
+									<slot name="close"></slot>
 								</button>
 							</div>
 						</DialogPanel>
@@ -104,18 +87,8 @@ function closeModal() {
 	</TransitionRoot>
 </template>
 
-<style lang="postcss" scoped>
-.will-input {
-	@apply inline-flex items-center  px-2 py-1 mt-2
-	border-2 rounded border-slate-300 dark:border-slate-600
-	bg-sky-100 dark:bg-sky-800
-	focus:ring-2 ring-green-400 dark:ring-green-600
-	outline-none transition-all;
-}
-.salt {
-	@apply w-32 mr-2;
-}
-.pwd {
-	@apply w-60;
+<style lang="postcss">
+html:has(#app-main.app-rounded) .dialog-backdrop {
+	@apply rounded-lg;
 }
 </style>

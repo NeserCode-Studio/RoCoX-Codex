@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { Ref, ref, toRefs, watch } from "vue"
-import { useRouter } from "vue-router"
-import { useApi } from "../composables/useApi"
-import { computedAsync, useStorage } from "@vueuse/core"
+import { Ref, ref, toRefs, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useApi } from '../composables/useApi'
+import { computedAsync, useStorage } from '@vueuse/core'
 
-import { CubeTransparentIcon, BugAntIcon } from "@heroicons/vue/20/solid"
-import { WindowCreator } from "../composables/useWindow"
+import { CubeTransparentIcon, BugAntIcon } from '@heroicons/vue/20/solid'
+import { WindowCreator } from '../composables/useWindow'
 
 const $props = withDefaults(
 	defineProps<{
@@ -15,9 +15,9 @@ const $props = withDefaults(
 		page?: number
 	}>(),
 	{
-		id: "",
-		search: "",
-		feature: "",
+		id: '',
+		search: '',
+		feature: '',
 		page: 1,
 	}
 )
@@ -38,17 +38,17 @@ const listData = computedAsync(async (onCancel) => {
 	})
 })
 const isEmpty = computedAsync(() => listData.value.length === 0)
-const pageSize = useStorage("rocox-api-angel-list-size", 21)
-const totalFromID = useStorage("rocox-api-angel-max-id", 0)
+const pageSize = useStorage('rocox-api-angel-list-size', 21)
+const totalFromID = useStorage('rocox-api-angel-max-id', 0)
 
-const $emits = defineEmits(["update:sizes"])
+const $emits = defineEmits(['update:sizes'])
 
 watch(listData, (val: any[]) => {
-	if (search.value === "" && feature.value === "" && page.value === 1) {
+	if (search.value === '' && feature.value === '' && page.value === 1) {
 		pageSize.value = val.length
 		totalFromID.value = parseInt(val[0].id)
 	}
-	$emits("update:sizes", {
+	$emits('update:sizes', {
 		listSize: val.length,
 		pageSize: pageSize.value,
 		total: totalFromID.value,
@@ -64,8 +64,8 @@ function getAngelIconSrc(iconSrc: string) {
 }
 
 const $router = useRouter()
-const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
-const angelPageTitle = useStorage("rocox-angel-page-title", "")
+const alwaysTargetNewWindow = useStorage('rocox-new-window-target', false)
+const angelPageTitle = useStorage('rocox-angel-page-title', '')
 const AngelWindow: Ref<WindowCreator | null> = ref(null)
 
 function setupWindowParams(id: string, name: string, hash: string) {
@@ -81,7 +81,7 @@ function goAngelView(hash: string) {
 	if (alwaysTargetNewWindow.value) AngelWindow.value!.setup()
 	else
 		$router.push({
-			name: "Angel",
+			name: 'Angel',
 			params: { hash },
 		})
 }
@@ -163,7 +163,7 @@ watch(page, () => {
 	flex flex-wrap items-start justify-center content-start
   overflow-auto snap-y snap-mandatory;
 
-	@apply sm:w-5/6 sm:min-h-[36rem] sm:max-h-[40rem] sm:px-4
+	@apply sm:w-full sm:min-h-[36rem] sm:max-h-[40rem] sm:px-4
 	sm:justify-start sm:items-center;
 }
 .angel-card {
@@ -173,11 +173,13 @@ watch(page, () => {
   dark:hover:bg-slate-600 dark:active:bg-slate-800 dark:active:border-slate-600
   rounded select-none transition-all snap-start cursor-pointer;
 
-	@apply sm:w-1/3 sm:h-10 sm:pl-3 sm:py-3;
+	@apply sm:w-[32%] sm:h-10 sm:pl-3 sm:py-3;
 }
 
 .details {
 	@apply relative w-full h-full inline-flex items-center justify-start;
+
+	@apply sm:text-base;
 }
 
 .name-text {
@@ -185,8 +187,6 @@ watch(page, () => {
   text-sm font-black border-r
   border-slate-200 dark:border-slate-600
   truncate transition-all;
-
-	@apply sm:text-base;
 }
 .name-text .id {
 	@apply font-mono opacity-60;

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue"
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import {
 	EllipsisHorizontalIcon,
 	ArrowsRightLeftIcon,
@@ -9,30 +9,35 @@ import {
 	LockOpenIcon,
 	RectangleGroupIcon,
 	RectangleStackIcon,
-} from "@heroicons/vue/20/solid"
-import { useStorage } from "@vueuse/core"
+} from '@heroicons/vue/20/solid'
+import { useStorage } from '@vueuse/core'
 
-const category = useStorage("rocox-category", "angels")
+const category = useStorage('rocox-category', 'angels')
 function isMatchCategoryOption(key: string): boolean {
 	return category.value === key
 }
-function turnToCategory(key: "angels" | "skills" | "items") {
+function turnToCategory(key: 'angels' | 'skills' | 'items') {
 	category.value = key
 }
 
-const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
+const alwaysTargetNewWindow = useStorage('rocox-new-window-target', false)
 function toggleTargetMode() {
 	alwaysTargetNewWindow.value = !alwaysTargetNewWindow.value
 }
 
-const alwaysUseFocusShortcut = useStorage("rocox-shortcut-use-focus", true)
+const alwaysUseFocusShortcut = useStorage('rocox-shortcut-use-focus', true)
 function toggleUseFocusShortcut() {
 	alwaysUseFocusShortcut.value = !alwaysUseFocusShortcut.value
 }
 
-const appRounded = useStorage("rocox-rounded", false)
+const appRounded = useStorage('rocox-rounded', false)
 function toggleRounded() {
 	appRounded.value = !appRounded.value
+}
+
+const isCacheWindowOpen = useStorage('rocox-cache-window-open', false)
+function toggleCacheWindow() {
+	isCacheWindowOpen.value = !isCacheWindowOpen.value
 }
 </script>
 
@@ -51,7 +56,7 @@ function toggleRounded() {
 				leave-to-class="transform scale-95 opacity-0"
 			>
 				<MenuItems class="menu-items">
-					<div class="category-options">
+					<div class="group-options">
 						<MenuItem
 							as="div"
 							class="menu-item"
@@ -107,51 +112,53 @@ function toggleRounded() {
 							>
 						</MenuItem>
 					</div>
-					<MenuItem
-						as="div"
-						class="menu-item"
-						v-slot="{ disabled, active }"
-						@click="toggleTargetMode()"
-					>
-						<ArrowTopRightOnSquareIcon
-							v-show="!alwaysTargetNewWindow"
-							class="icon"
-						/>
-						<HomeModernIcon v-show="alwaysTargetNewWindow" class="icon" />
-						<span
-							:class="[
-								'text',
-								disabled ? 'disabled' : null,
-								active ? 'active' : null,
-							]"
-							title="切换浏览模式"
-							>{{
-								alwaysTargetNewWindow ? "总在当前页面" : "总是打开新页面"
-							}}</span
+					<div class="group-options">
+						<MenuItem
+							as="div"
+							class="menu-item"
+							v-slot="{ disabled, active }"
+							@click="toggleTargetMode()"
 						>
-					</MenuItem>
-					<MenuItem
-						as="div"
-						class="menu-item"
-						v-slot="{ disabled, active }"
-						@click="toggleUseFocusShortcut()"
-					>
-						<LockOpenIcon v-show="alwaysUseFocusShortcut" class="icon" />
-						<LockClosedIcon v-show="!alwaysUseFocusShortcut" class="icon" />
-						<span
-							:class="[
-								'text',
-								disabled ? 'disabled' : null,
-								active ? 'active' : null,
-							]"
-							title="切换快捷键模式"
-							>{{
-								alwaysUseFocusShortcut
-									? "全局启用使用快捷键"
-									: "总在应用内使用快捷键"
-							}}</span
+							<ArrowTopRightOnSquareIcon
+								v-show="!alwaysTargetNewWindow"
+								class="icon"
+							/>
+							<HomeModernIcon v-show="alwaysTargetNewWindow" class="icon" />
+							<span
+								:class="[
+									'text',
+									disabled ? 'disabled' : null,
+									active ? 'active' : null,
+								]"
+								title="切换浏览模式"
+								>{{
+									alwaysTargetNewWindow ? '总在当前页面' : '总是打开新页面'
+								}}</span
+							>
+						</MenuItem>
+						<MenuItem
+							as="div"
+							class="menu-item"
+							v-slot="{ disabled, active }"
+							@click="toggleUseFocusShortcut()"
 						>
-					</MenuItem>
+							<LockOpenIcon v-show="alwaysUseFocusShortcut" class="icon" />
+							<LockClosedIcon v-show="!alwaysUseFocusShortcut" class="icon" />
+							<span
+								:class="[
+									'text',
+									disabled ? 'disabled' : null,
+									active ? 'active' : null,
+								]"
+								title="切换快捷键模式"
+								>{{
+									alwaysUseFocusShortcut
+										? '全局启用使用快捷键'
+										: '总在应用内使用快捷键'
+								}}</span
+							>
+						</MenuItem>
+					</div>
 					<MenuItem
 						as="div"
 						class="menu-item"
@@ -167,7 +174,25 @@ function toggleRounded() {
 								active ? 'active' : null,
 							]"
 							title="切换应用圆角"
-							>{{ appRounded ? "应用框架直角" : "应用框架圆角" }}</span
+							>{{ appRounded ? '应用框架直角' : '应用框架圆角' }}</span
+						>
+					</MenuItem>
+					<MenuItem
+						as="div"
+						class="menu-item"
+						v-slot="{ disabled, active }"
+						@click="toggleCacheWindow()"
+					>
+						<RectangleGroupIcon v-show="isCacheWindowOpen" class="icon" />
+						<RectangleStackIcon v-show="!isCacheWindowOpen" class="icon" />
+						<span
+							:class="[
+								'text',
+								disabled ? 'disabled' : null,
+								active ? 'active' : null,
+							]"
+							title="管理缓存"
+							>{{ isCacheWindowOpen ? '退出缓存管理' : '应用缓存管理' }}</span
 						>
 					</MenuItem>
 				</MenuItems>
@@ -227,7 +252,7 @@ function toggleRounded() {
 	transition-all;
 }
 
-.category-options {
+.group-options {
 	@apply mb-1 pb-1 border-b-2
 	border-slate-200 dark:border-slate-600
 	transition-all;

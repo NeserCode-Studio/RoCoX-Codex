@@ -1,21 +1,21 @@
 export interface RequestHeaders {
 	authority: string
 	accept: string
-	"accept-language"?: string
-	"content-type"?: string
-	"Access-Control-Allow-Origin"?: string
-	"Access-Control-Allow-Credentials"?: string
+	'accept-language'?: string
+	'content-type'?: string
+	'Access-Control-Allow-Origin'?: string
+	'Access-Control-Allow-Credentials'?: string
 	dnt?: string
 	origin?: string
 	referrer?: string
-	"sec-ch-ua"?: string
-	"sec-ch-ua-mobile"?: string
-	"sec-ch-ua-platform"?: string
-	"sec-fetch-dest"?: string
-	"sec-fetch-mode"?: string
-	"sec-fetch-site"?: string
-	"sec-gpc"?: string
-	"user-agent"?: string
+	'sec-ch-ua'?: string
+	'sec-ch-ua-mobile'?: string
+	'sec-ch-ua-platform'?: string
+	'sec-fetch-dest'?: string
+	'sec-fetch-mode'?: string
+	'sec-fetch-site'?: string
+	'sec-gpc'?: string
+	'user-agent'?: string
 }
 
 export interface FeatureObject {
@@ -48,7 +48,7 @@ export interface ChainItemProp {
 	name?: string
 	start?: boolean
 	lv?: string
-	to?: ChainItemProp[] | "0"
+	to?: ChainItemProp[] | '0'
 }
 
 export interface AngelDataObject extends AngelListItemObject {
@@ -145,7 +145,7 @@ export interface ItemListItemObject {
 	Desc?: string
 	ExpireTime?: string
 	Price?: string
-	Unique?: "0" | "1"
+	Unique?: '0' | '1'
 	id?: string
 	name?: string
 }
@@ -175,13 +175,13 @@ export interface ItemListParma {
 }
 
 export type Collections = Map<
-	| "GetFeatures"
-	| "GetAngelList"
-	| "GetAngel"
-	| "GetSkillList"
-	| "GetSkill"
-	| "GetItemList"
-	| "KeyShortCut",
+	| 'GetFeatures'
+	| 'GetAngelList'
+	| 'GetAngel'
+	| 'GetSkillList'
+	| 'GetSkill'
+	| 'GetItemList'
+	| 'KeyShortCut',
 	number
 >
 
@@ -189,4 +189,12 @@ export interface Help {
 	id: number
 	question: string
 	answer: string
+}
+
+export type Url = `http://${string}` | `https://${string}`
+export type UrlLike = Url | string
+
+export interface ConcurrencyRequestOption {
+	concurrent: number
+	onProgress?: (loaded: number, total: number) => void
 }

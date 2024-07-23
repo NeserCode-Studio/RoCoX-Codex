@@ -1,27 +1,28 @@
 <script setup lang="ts">
-import TitleBar from "./components/native/TitleBar.vue"
-import Dialog from "./components/Dialog.vue"
-import TopLinks from "./components/TopLinks.vue"
+import TitleBar from './components/native/TitleBar.vue'
+import TopLinks from './components/TopLinks.vue'
+import CacheDialog from './components/CacheDialog.vue'
+import DevDialog from './components/DevDialog.vue'
 
-import { ref, provide, onMounted, nextTick, computed } from "vue"
-import { useStorage } from "@vueuse/core"
-import { UpdateTitleFunctionalKey } from "./tokens"
-import { useDeCryptKey } from "./composables/useLocal"
+import { ref, provide, onMounted, nextTick, computed } from 'vue'
+import { useStorage } from '@vueuse/core'
+import { UpdateTitleFunctionalKey } from './tokens'
+import { useDeCryptKey } from './composables/useLocal'
 
-import { listen } from "@tauri-apps/api/event"
+import { listen } from '@tauri-apps/api/event'
 
-const salt = useStorage("rocox-dev-salt", "")
-const password = useStorage("rocox-dev-password", "")
-const useDev = useStorage("rocox-dev-tools-state", false)
-const isRoundedAvatar = useStorage("rocox-avatar-rounded", false)
+const salt = useStorage('rocox-dev-salt', '')
+const password = useStorage('rocox-dev-password', '')
+const useDev = useStorage('rocox-dev-tools-state', false)
+const isRoundedAvatar = useStorage('rocox-avatar-rounded', false)
 
 const isOpenModelDialog = ref(isRoundedAvatar.value)
 const slideDirection = useStorage(
-	"rocox-navigation-transition-direction",
-	"slideleft"
+	'rocox-navigation-transition-direction',
+	'slideleft'
 )
 
-const title = ref("RocoKingdom Codex")
+const title = ref('RocoKingdom Codex')
 function titleUpdateFn(change: string) {
 	title.value = change
 }
@@ -41,7 +42,7 @@ onMounted(async () => {
 
 	// await invoke("use_keytools")
 	const unlisten = async () => {
-		return await listen<Payload>("key", (event) => {
+		return await listen<Payload>('key', (event) => {
 			console.log(
 				`Event: ${event.event} #${event.payload!.key}/${event.payload.action}`
 			)
@@ -49,8 +50,8 @@ onMounted(async () => {
 	}
 
 	unlisten()
-	const injectPreventKey = ["u", "r", "f", "g"]
-	document.addEventListener("keydown", function (e) {
+	const injectPreventKey = ['u', 'r', 'f', 'g']
+	document.addEventListener('keydown', function (e) {
 		if (injectPreventKey.includes(e.key) && (e.ctrlKey || e.metaKey)) {
 			console.log(`[Inject Prevent Key]`, e.key)
 
@@ -58,23 +59,26 @@ onMounted(async () => {
 		}
 	})
 	// Ctrl/Meta + Mouse
-	document.addEventListener("click", function (e) {
+	document.addEventListener('click', function (e) {
 		if (e.ctrlKey || e.metaKey) {
 			e.preventDefault()
 		}
 	})
 })
 
-const appRounded = useStorage("rocox-rounded", false)
+const appRounded = useStorage('rocox-rounded', false)
 const computedAppRoundedClass = computed(() =>
-	appRounded.value ? "app-rounded" : null
+	appRounded.value ? 'app-rounded' : null
 )
+
+const isAppCacheWindowOpen = useStorage('rocox-cache-window-open', false)
 </script>
 
 <template>
 	<div id="app-main" :class="[computedAppRoundedClass]" @contextmenu.prevent>
 		<TitleBar :titleText="title" />
-		<Dialog v-model:isOpen="isOpenModelDialog" />
+		<DevDialog v-model:isOpen="isOpenModelDialog" />
+		<CacheDialog v-model:isOpen="isAppCacheWindowOpen" />
 		<TopLinks />
 
 		<router-view id="context" v-slot="{ Component }">
@@ -93,8 +97,8 @@ html.dark {
 }
 
 @font-face {
-	src: url("./assets/SourceHanSerifCN-VF.ttf");
-	font-family: "SourceHanSerifCN";
+	src: url('./assets/SourceHanSerifCN-VF.ttf');
+	font-family: 'SourceHanSerifCN';
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -148,10 +152,10 @@ html.dark {
 	border border-slate-400
 	bg-slate-50 dark:bg-slate-700
 	text-slate-700 dark:text-slate-100
-	transition-all duration-200 ease-in-out
+	transition-colors duration-200 ease-in-out
 	overflow-hidden;
 
-	font-family: "SourceHanSerifCN";
+	font-family: 'SourceHanSerifCN';
 }
 #app-main.app-rounded {
 	@apply rounded-lg overflow-hidden;
