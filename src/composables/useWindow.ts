@@ -51,8 +51,8 @@ export const toggleMiniWindow = async (symbol?: boolean) => {
 			height: 600,
 		},
 		{
-			width: 850,
-			height: 900,
+			width: 1024,
+			height: 800,
 		},
 	]
 

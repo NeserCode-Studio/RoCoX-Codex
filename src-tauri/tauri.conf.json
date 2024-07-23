@@ -8,7 +8,7 @@
 	},
 	"package": {
 		"productName": "RoCoX Codex",
-		"version": "1.1.0-beta.2"
+		"version": "1.2.0-beta.1"
 	},
 	"tauri": {
 		"allowlist": {
@@ -44,10 +44,11 @@
 				"height": 600,
 				"minWidth": 500,
 				"minHeight": 600,
-				"maxWidth": 850,
-				"maxHeight": 900,
+				"maxWidth": 1024,
+				"maxHeight": 800,
 				"decorations": false,
-				"visible": false
+				"visible": false,
+				"transparent": true
 			}
 		],
 		"systemTray": {

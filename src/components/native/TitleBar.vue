@@ -285,3 +285,9 @@ onMounted(async () => {
 	rounded scale-125;
 }
 </style>
+
+<style lang="postcss">
+#app-main.app-rounded #app-title-bar {
+	@apply rounded-t-lg overflow-hidden;
+}
+</style>

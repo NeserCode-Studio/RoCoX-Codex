@@ -9,9 +9,8 @@ import {
 import { useStorage } from "@vueuse/core"
 
 const isOpen = defineModel<boolean>("isOpen", {
-	local: true,
 	required: true,
-	default: true,
+	default: false,
 })
 
 const salt = useStorage("rocox-dev-salt", "")

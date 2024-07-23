@@ -163,8 +163,8 @@ watch(page, () => {
 	flex flex-wrap items-start justify-center content-start
   overflow-auto snap-y snap-mandatory;
 
-	@apply sm:w-2/3 sm:min-h-[36rem] sm:max-h-[40rem] sm:px-4
-	sm:flex-col sm:justify-start sm:items-center sm:flex-nowrap;
+	@apply sm:w-5/6 sm:min-h-[36rem] sm:max-h-[40rem] sm:px-4
+	sm:justify-start sm:items-center;
 }
 .angel-card {
 	@apply w-[45%] h-8 flex flex-col
@@ -173,7 +173,7 @@ watch(page, () => {
   dark:hover:bg-slate-600 dark:active:bg-slate-800 dark:active:border-slate-600
   rounded select-none transition-all snap-start cursor-pointer;
 
-	@apply sm:w-full sm:h-12 sm:pl-3 sm:py-3;
+	@apply sm:w-1/3 sm:h-10 sm:pl-3 sm:py-3;
 }
 
 .details {
@@ -183,7 +183,7 @@ watch(page, () => {
 .name-text {
 	@apply inline-block pr-2 mx-2
   text-sm font-black border-r
-  border-gray-300 dark:border-gray-500
+  border-slate-200 dark:border-slate-600
   truncate transition-all;
 
 	@apply sm:text-base;
@@ -205,14 +205,14 @@ watch(page, () => {
 	@apply absolute right-0 w-7 h-7 inline-block
   rounded-r;
 
-	@apply sm:w-11 sm:h-11;
+	@apply sm:w-9 sm:h-9;
 }
 .icon-palceholder {
 	@apply absolute -right-1 w-11 h-11 inline-block p-3
   text-slate-600 dark:text-slate-300
   rounded-r transition-all;
 
-	@apply sm:w-14 sm:h-14;
+	@apply sm:w-12 sm:h-12;
 }
 
 .empty-palceholder {

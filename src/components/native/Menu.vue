@@ -7,6 +7,8 @@ import {
 	HomeModernIcon,
 	LockClosedIcon,
 	LockOpenIcon,
+	RectangleGroupIcon,
+	RectangleStackIcon,
 } from "@heroicons/vue/20/solid"
 import { useStorage } from "@vueuse/core"
 
@@ -26,6 +28,11 @@ function toggleTargetMode() {
 const alwaysUseFocusShortcut = useStorage("rocox-shortcut-use-focus", true)
 function toggleUseFocusShortcut() {
 	alwaysUseFocusShortcut.value = !alwaysUseFocusShortcut.value
+}
+
+const appRounded = useStorage("rocox-rounded", false)
+function toggleRounded() {
+	appRounded.value = !appRounded.value
 }
 </script>
 
@@ -143,6 +150,24 @@ function toggleUseFocusShortcut() {
 									? "全局启用使用快捷键"
 									: "总在应用内使用快捷键"
 							}}</span
+						>
+					</MenuItem>
+					<MenuItem
+						as="div"
+						class="menu-item"
+						v-slot="{ disabled, active }"
+						@click="toggleRounded()"
+					>
+						<RectangleGroupIcon v-show="appRounded" class="icon" />
+						<RectangleStackIcon v-show="!appRounded" class="icon" />
+						<span
+							:class="[
+								'text',
+								disabled ? 'disabled' : null,
+								active ? 'active' : null,
+							]"
+							title="切换应用圆角"
+							>{{ appRounded ? "应用框架直角" : "应用框架圆角" }}</span
 						>
 					</MenuItem>
 				</MenuItems>

@@ -3,7 +3,7 @@ import TitleBar from "./components/native/TitleBar.vue"
 import Dialog from "./components/Dialog.vue"
 import TopLinks from "./components/TopLinks.vue"
 
-import { ref, provide, onMounted, nextTick } from "vue"
+import { ref, provide, onMounted, nextTick, computed } from "vue"
 import { useStorage } from "@vueuse/core"
 import { UpdateTitleFunctionalKey } from "./tokens"
 import { useDeCryptKey } from "./composables/useLocal"
@@ -64,10 +64,15 @@ onMounted(async () => {
 		}
 	})
 })
+
+const appRounded = useStorage("rocox-rounded", false)
+const computedAppRoundedClass = computed(() =>
+	appRounded.value ? "app-rounded" : null
+)
 </script>
 
 <template>
-	<div id="app-main" @contextmenu.prevent>
+	<div id="app-main" :class="[computedAppRoundedClass]" @contextmenu.prevent>
 		<TitleBar :titleText="title" />
 		<Dialog v-model:isOpen="isOpenModelDialog" />
 		<TopLinks />
@@ -148,10 +153,13 @@ html.dark {
 
 	font-family: "SourceHanSerifCN";
 }
+#app-main.app-rounded {
+	@apply rounded-lg overflow-hidden;
+}
 
 #context {
-	@apply relative flex w-full h-full max-h-[34rem] flex-col justify-start items-center px-4;
+	@apply relative flex w-full h-full max-h-[32rem] flex-col justify-start items-center px-4;
 
-	@apply sm:px-12 sm:max-h-[50rem];
+	@apply sm:px-12 sm:max-h-[40rem];
 }
 </style>
