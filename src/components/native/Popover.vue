@@ -1,17 +1,24 @@
-<script setup>
+<script lang="ts" setup>
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
+
+withDefaults(
+	defineProps<{
+		icon?: boolean
+	}>(),
+	{
+		icon: true,
+	}
+)
 </script>
 
 <template>
 	<div class="w-full max-w-sm">
 		<Popover v-slot="{ open }" class="relative">
-			<PopoverButton
-				:class="open ? 'text-white' : 'text-white/90'"
-				class="inline-flex items-center px-2 py-1 text-base font-medium rounded-md bg-slate-400 group hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
-			>
+			<PopoverButton class="outline-none">
 				<span><slot name="btn"></slot></span>
 				<ChevronDownIcon
+					v-if="icon"
 					:class="open ? 'rotate-180' : ''"
 					class="w-5 h-5 ml-2 transition duration-150 ease-in-out group-hover:text-orange-300/80"
 					aria-hidden="true"
@@ -27,7 +34,7 @@ import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 				leave-to-class="translate-y-1 opacity-0"
 			>
 				<PopoverPanel
-					class="absolute z-10 w-screen max-w-sm mt-2 transform -translate-x-1/2 left-1/2 sm:px-0 lg:max-w-3xl"
+					class="absolute z-10 mt-2 transform -translate-x-1/2 left-1/2"
 				>
 					<slot name="content"></slot>
 				</PopoverPanel>

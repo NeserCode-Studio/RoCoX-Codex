@@ -91,7 +91,7 @@ const states = [
 	@apply text-sm;
 }
 .pop-content {
-	@apply w-full inline-flex flex-wrap justify-center items-center gap-2 p-2
+	@apply relative w-full inline-flex flex-wrap justify-center items-center gap-2 p-2
   rounded border-2 border-slate-300 bg-sky-100
   dark:border-slate-700 dark:bg-slate-600
   transition-colors ease-in-out duration-300;

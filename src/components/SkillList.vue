@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { CubeTransparentIcon, BugAntIcon } from "@heroicons/vue/20/solid"
-import { Ref, ref, toRefs, watch } from "vue"
-import { useApi } from "../composables/useApi"
-import { computedAsync, useStorage } from "@vueuse/core"
-import { useRouter } from "vue-router"
-import { WindowCreator } from "../composables/useWindow"
+import { CubeTransparentIcon, BugAntIcon } from '@heroicons/vue/20/solid'
+import { Ref, ref, toRefs, watch } from 'vue'
+import { useApi } from '../composables/useApi'
+import { computedAsync, useStorage } from '@vueuse/core'
+import { useRouter } from 'vue-router'
+import { WindowCreator } from '../composables/useWindow'
 
 const $props = withDefaults(
 	defineProps<{
@@ -14,9 +14,9 @@ const $props = withDefaults(
 		page?: number
 	}>(),
 	{
-		id: "",
-		search: "",
-		feature: "",
+		id: '',
+		search: '',
+		feature: '',
 		page: 1,
 	}
 )
@@ -41,17 +41,17 @@ function getFeatureIconSrc(propertyIndex: string) {
 }
 
 const isEmpty = computedAsync(() => listData.value.length === 0)
-const pageSize = useStorage("rocox-api-skill-list-size", 21)
-const totalFromID = useStorage("rocox-api-skill-max-id", 0)
+const pageSize = useStorage('rocox-api-skill-list-size', 21)
+const totalFromID = useStorage('rocox-api-skill-max-id', 0)
 
-const $emits = defineEmits(["update:sizes"])
+const $emits = defineEmits(['update:sizes'])
 
 watch(listData, (val: any[]) => {
-	if (search.value === "" && feature.value === "" && page.value === 1) {
+	if (search.value === '' && feature.value === '' && page.value === 1) {
 		pageSize.value = val.length
 		totalFromID.value = parseInt(val[0].id)
 	}
-	$emits("update:sizes", {
+	$emits('update:sizes', {
 		listSize: val.length,
 		pageSize: pageSize.value,
 		total: totalFromID.value,
@@ -60,8 +60,8 @@ watch(listData, (val: any[]) => {
 })
 
 const $router = useRouter()
-const alwaysTargetNewWindow = useStorage("rocox-new-window-target", false)
-const skillPageTitle = useStorage("rocox-skill-page-title", "")
+const alwaysTargetNewWindow = useStorage('rocox-new-window-target', false)
+const skillPageTitle = useStorage('rocox-skill-page-title', '')
 const SkillWindow: Ref<WindowCreator | null> = ref(null)
 
 function setupWindowParams(id: string, name: string, hash: string) {
@@ -77,7 +77,7 @@ function goSkillView(hash: string) {
 	if (alwaysTargetNewWindow.value) SkillWindow.value!.setup()
 	else
 		$router.push({
-			name: "Skill",
+			name: 'Skill',
 			params: { hash },
 		})
 }
@@ -146,8 +146,8 @@ watch(page, () => {
 	items-start justify-center content-start
   overflow-auto snap-y snap-mandatory;
 
-	@apply sm:w-2/3 sm:min-h-[36rem] sm:max-h-[40rem]
-	sm:justify-evenly sm:items-center;
+	@apply sm:min-h-[36rem] sm:max-h-[40rem]
+	sm:items-center;
 }
 
 .skill-card {
@@ -156,6 +156,8 @@ watch(page, () => {
   hover:bg-slate-100 active:bg-slate-200 active:border-slate-300
   dark:hover:bg-slate-600 dark:active:bg-slate-800 dark:active:border-slate-600
   rounded select-none transition-all snap-start cursor-pointer;
+
+	@apply sm:w-1/4;
 }
 
 .skill-card .name-text {
