@@ -2,54 +2,93 @@
 import Dialog from './native/Dialog.vue'
 import Popover from './native/Popover.vue'
 
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/solid'
-
-import { useStorage } from '@vueuse/core'
+import {
+	concurrencyRequest,
+	attemptGenerateRequest,
+} from '../composables/useHttp'
+import { TestDatabase, TodoData } from '../db/TestDB'
+import { ref } from 'vue'
+import { AngelListItemObject, AngelListParma } from '../share'
 
 const isOpen = defineModel<boolean>('isOpen', {
 	default: false,
 })
 const closeModel = () => {}
 
-const angelListCached = useStorage('rocox-cached-list-angel', false)
-const skillListCached = useStorage('rocox-cached-list-skill', false)
-const itemListCached = useStorage('rocox-cached-list-item', false)
-const angelCached = useStorage('rocox-cached-angel', false)
-const skillCached = useStorage('rocox-cached-skill', false)
-const itemCached = useStorage('rocox-cached-item', false)
+const $db = ref<TestDatabase>(new TestDatabase())
+const testFetchData = ref<any[]>([])
+const getRandomTodoItems = (cases: number = 1) => {
+	const reqUrl = `https://jsonplaceholder.typicode.com/todos/`
+	const getUrl = (id: number) => `${reqUrl}${id}`
 
-const states = [
-	{
-		key: 'angelListCached',
-		label: '精灵列表',
-		value: angelListCached.value,
-	},
-	{
-		key: 'skillListCached',
-		label: '技能列表',
-		value: skillListCached.value,
-	},
-	{
-		key: 'itemListCached',
-		label: '物品列表',
-		value: itemListCached.value,
-	},
-	{
-		key: 'angelCached',
-		label: '精灵',
-		value: angelCached.value,
-	},
-	{
-		key: 'skillCached',
-		label: '技能',
-		value: skillCached.value,
-	},
-	{
-		key: 'itemCached',
-		label: '物品',
-		value: itemCached.value,
-	},
-]
+	return [
+		...new Set(
+			Array.from({ length: cases }, () => Math.floor(Math.random() * 100) + 1)
+		),
+	].map((random) => getUrl(random))
+}
+
+const getTestData = async () => {
+	const urlLength = Math.floor(Math.random() * 10) + 1
+	const urls = getRandomTodoItems(urlLength)
+
+	const res = await concurrencyRequest<TodoData>(urls, {
+		concurrent: 12,
+		onProgress: (load, total) => {
+			console.log(`${Math.floor(((load + 1) / total) * 100)}%`)
+		},
+	})
+
+	testFetchData.value = res as unknown[]
+	return res as TodoData[]
+}
+
+const testDataBase = async () => {
+	const data = await getTestData()
+	$db.value.addTodo(data)
+
+	console.log(await $db.value.getTodos())
+}
+
+const clearTodos = async () =>
+	$db.value.deleteTodo((await $db.value.getTodos()).map((item) => item.id))
+
+const getTestDatabase = async () => {
+	const data = await $db.value.getTodos()
+	console.log(data)
+}
+const getUncompletedTodo = async () => {
+	const data = await $db.value.getUncompletedTodos()
+	console.log(data)
+}
+
+const getAllAngelAttempt = async () => {
+	const data = await attemptGenerateRequest<
+		AngelListItemObject,
+		AngelListParma
+	>(
+		'https://api.rocotime.com/api/spiritList/',
+		{
+			attempt(params: AngelListParma) {
+				return {
+					...params,
+					page: params.page + 1,
+				}
+			},
+			confirm: (data) => !data.length,
+			onProgress: (load) => {
+				console.log(`Loaded ${load} items.`)
+			},
+		},
+		{
+			search: '',
+			id: '',
+			feature: '',
+			page: 1,
+		}
+	)
+	console.log(data)
+}
 </script>
 
 <template>
@@ -64,14 +103,48 @@ const states = [
 						</template>
 						<template #content>
 							<div class="pop-content">
-								<div class="item" v-for="state in states" :key="state.key">
-									<span class="label">{{ state.label }}</span>
-									<CheckCircleIcon class="icon" v-if="state.value" />
-									<XCircleIcon class="icon" v-else />
-								</div>
+								{{ JSON.stringify(testFetchData, null, 2) }}
 							</div>
 						</template>
 					</Popover>
+				</div>
+
+				<div class="test-btns">
+					<button type="button" class="btn" title="test" @click="getTestData">
+						获取数据
+					</button>
+					<button type="button" class="btn" title="test" @click="testDataBase">
+						使用测试数据测试DB
+					</button>
+					<button type="button" class="btn" title="test">添加Case</button>
+					<button type="button" class="btn" title="test">更新Case</button>
+					<button type="button" class="btn" title="test" @click="clearTodos">
+						清空Case
+					</button>
+					<button
+						type="button"
+						class="btn"
+						title="test"
+						@click="getTestDatabase"
+					>
+						获取Case
+					</button>
+					<button
+						type="button"
+						class="btn"
+						title="test"
+						@click="getUncompletedTodo"
+					>
+						获取未完成Case
+					</button>
+					<button
+						type="button"
+						class="btn"
+						title="test"
+						@click="getAllAngelAttempt"
+					>
+						获取所有Angel
+					</button>
 				</div>
 			</div>
 		</template>
@@ -104,5 +177,14 @@ const states = [
 }
 .pop-content .item .icon {
 	@apply w-4 h-4;
+}
+
+.test-btns {
+	@apply flex justify-center items-center gap-x-2 gap-y-1 flex-wrap mt-2;
+}
+.test-btns .btn {
+	@apply inline-flex justify-center items-center px-2 py-0.5
+  text-sm rounded bg-slate-200  dark:bg-slate-700
+	transition-colors ease-in-out duration-300;
 }
 </style>

@@ -1,18 +1,18 @@
-import { fetch, Body, ResponseType } from '@tauri-apps/api/http'
-
-import { apiOption } from './useApi'
+import { fetch as $fetch, Body, ResponseType } from '@tauri-apps/api/http'
 
 import type { FetchOptions } from '@tauri-apps/api/http'
-import type { RequestHeaders } from '../share'
+import type { AttemptGenerateRequestOption, RequestHeaders } from '../share'
 import type { ConcurrencyRequestOption, UrlLike } from '../share'
 // type Signal = AbortSignal
 
+const headersBase = {
+	authority: 'api.rocotime.com',
+	accept: 'application/json, text/plain, */*',
+	'Access-Control-Allow-Credentials': 'true',
+}
+
 export class RocoRequest {
-	private $headers: RequestHeaders = {
-		authority: 'api.rocotime.com',
-		accept: 'application/json, text/plain, */*',
-		'Access-Control-Allow-Credentials': 'true',
-	}
+	private $headers: RequestHeaders = headersBase
 	private $uri: string = ''
 	private $Option: FetchOptions = {
 		method: 'OPTIONS',
@@ -44,7 +44,7 @@ export class RocoRequest {
 		console.log('HTTP ST GET - ', reqUrl)
 		console.time(reqUrl)
 		// Request
-		const response = await fetch<T>(reqUrl, {
+		const response = await $fetch<T>(reqUrl, {
 			...this.$Option,
 			method: 'GET',
 			headers: this.$headers,
@@ -67,7 +67,7 @@ export class RocoRequest {
 		console.log('HTTP ST POST - ', reqUrl)
 		console.time(reqUrl)
 		// Request
-		const response = await fetch<T>(reqUrl, {
+		const response = await $fetch<T>(reqUrl, {
 			...this.$Option,
 			method: 'POST',
 			headers: this.$headers,
@@ -113,12 +113,11 @@ export const concurrencyRequest = <T>(
 			onProgress(i, urls.length)
 
 			try {
-				results[i] = (
-					await fetch<T>(url, {
-						headers: apiOption.headers,
-						timeout: apiOption.timeout,
-						responseType: ResponseType.JSON,
+				results[i] = await (
+					await $fetch(url, {
 						method: 'GET',
+						responseType: ResponseType.JSON,
+						headers: headersBase,
 					})
 				).data
 			} catch (err) {
@@ -132,5 +131,43 @@ export const concurrencyRequest = <T>(
 
 		const times = Math.min(concurrent, urls.length)
 		for (let i = 0; i < times; i++) request()
+	})
+}
+
+export const attemptGenerateRequest = <T, K extends Record<never, never>>(
+	url: UrlLike,
+	option: AttemptGenerateRequestOption<T, K>,
+	params: K
+) => {
+	if (!url) return Promise.reject()
+	const { attempt, confirm, onProgress = () => {} } = option
+	return new Promise(async (resolve) => {
+		const results: T[] = []
+		let tempData: T | unknown = null
+		let counter = 0
+
+		const req = async (reqParams: K) =>
+			await (
+				await $fetch<{ data: [T] }>(url, {
+					method: 'POST',
+					body: Body.json({ ...reqParams }),
+					responseType: ResponseType.JSON,
+				})
+			).data.data
+
+		while (tempData !== 'DONE') {
+			params = attempt(params)
+			const data = await req(params)
+
+			console.log(confirm(data), data)
+			if (!confirm(data)) {
+				tempData = data
+				results.push(data[0])
+				onProgress(++counter)
+			} else {
+				tempData = 'DONE'
+				resolve(results)
+			}
+		}
 	})
 }

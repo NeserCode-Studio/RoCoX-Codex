@@ -198,3 +198,8 @@ export interface ConcurrencyRequestOption {
 	concurrent: number
 	onProgress?: (loaded: number, total: number) => void
 }
+export interface AttemptGenerateRequestOption<T, K> {
+	attempt: (params: K) => K
+	confirm: (data: T[]) => boolean
+	onProgress?: (loaded: number) => void
+}

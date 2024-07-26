@@ -203,7 +203,9 @@ const copyId = async (id: string) => {
   transition-colors ease-in-out duration-300;
 }
 .item-info-content .id-content {
-	@apply inline-flex justify-center items-baseline gap-1;
+	@apply inline-flex justify-center items-baseline gap-1
+	border-b border-dashed border-slate-400 dark:border-slate-500
+	transition-all ease-in-out duration-300;
 }
 .id-content .tip {
 	@apply text-xs cursor-pointer;
@@ -211,6 +213,6 @@ const copyId = async (id: string) => {
 
 .item-info-content .desc {
 	@apply w-full inline-flex justify-center items-center mb-0
-	text-xs;
+	opacity-75 text-xs;
 }
 </style>

@@ -15,12 +15,14 @@ withDefaults(
 <template>
 	<div class="w-full max-w-sm">
 		<Popover v-slot="{ open }" class="relative">
-			<PopoverButton class="outline-none">
+			<PopoverButton
+				class="relative inline-flex items-center justify-center outline-none w-fit"
+			>
 				<span><slot name="btn"></slot></span>
 				<ChevronDownIcon
 					v-if="icon"
 					:class="open ? 'rotate-180' : ''"
-					class="w-5 h-5 ml-2 transition duration-150 ease-in-out group-hover:text-orange-300/80"
+					class="w-5 h-5 transition duration-150 ease-in-out group-hover:text-orange-300/80"
 					aria-hidden="true"
 				/>
 			</PopoverButton>
@@ -33,9 +35,7 @@ withDefaults(
 				leave-from-class="translate-y-0 opacity-100"
 				leave-to-class="translate-y-1 opacity-0"
 			>
-				<PopoverPanel
-					class="absolute z-10 mt-2 transform -translate-x-1/2 left-1/2"
-				>
+				<PopoverPanel class="absolute left-0 z-10 mt-2">
 					<slot name="content"></slot>
 				</PopoverPanel>
 			</transition>
