@@ -32,7 +32,7 @@ const closeModal = () => {
 		<Dialog
 			as="div"
 			@close="modelEnabled ? closeModal : null"
-			class="relative z-10"
+			class="relative z-10 dialog"
 		>
 			<TransitionChild
 				as="template"
@@ -64,7 +64,7 @@ const closeModal = () => {
 						>
 							<DialogTitle
 								as="h2"
-								class="text-lg font-bold text-gray-900 transition-colors dark:text-gray-100"
+								class="text-lg font-black text-gray-900 transition-colors dark:text-gray-100"
 							>
 								<slot name="title"></slot>
 							</DialogTitle>
@@ -96,5 +96,8 @@ const closeModal = () => {
 <style lang="postcss">
 html:has(#app-main.app-rounded) .dialog-backdrop {
 	@apply rounded-lg;
+}
+.dialog {
+	font-family: 'SourceHanSerifCN';
 }
 </style>

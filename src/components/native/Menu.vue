@@ -9,6 +9,7 @@ import {
 	LockOpenIcon,
 	RectangleGroupIcon,
 	RectangleStackIcon,
+	CloudArrowDownIcon,
 } from '@heroicons/vue/20/solid'
 import { useStorage } from '@vueuse/core'
 
@@ -183,8 +184,7 @@ function toggleCacheWindow() {
 						v-slot="{ disabled, active }"
 						@click="toggleCacheWindow()"
 					>
-						<RectangleGroupIcon v-show="isCacheWindowOpen" class="icon" />
-						<RectangleStackIcon v-show="!isCacheWindowOpen" class="icon" />
+						<CloudArrowDownIcon class="icon" />
 						<span
 							:class="[
 								'text',
