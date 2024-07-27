@@ -2,149 +2,103 @@
 import Dialog from './native/Dialog.vue'
 import Popover from './native/Popover.vue'
 
-import {
-	concurrencyRequest,
-	attemptGenerateRequest,
-} from '../composables/useHttp'
-import { TestDatabase, TodoData } from '../db/TestDB'
 import { ref } from 'vue'
-import { AngelListItemObject, AngelListParma } from '../share'
+import { ListPagesDatabase } from '../db'
+import { attemptGenerateRequest } from '../composables/useHttp'
+import { StorageSerializers, useStorageAsync } from '@vueuse/core'
 
 const isOpen = defineModel<boolean>('isOpen', {
 	default: false,
 })
 const closeModel = () => {}
 
-const $db = ref<TestDatabase>(new TestDatabase())
-const testFetchData = ref<any[]>([])
-const getRandomTodoItems = (cases: number = 1) => {
-	const reqUrl = `https://jsonplaceholder.typicode.com/todos/`
-	const getUrl = (id: number) => `${reqUrl}${id}`
+const $db = ref<ListPagesDatabase>(new ListPagesDatabase())
 
-	return [
-		...new Set(
-			Array.from({ length: cases }, () => Math.floor(Math.random() * 100) + 1)
-		),
-	].map((random) => getUrl(random))
+const urlList = {
+	angel: 'https://api.rocotime.com/api/spiritList/',
+	skill: 'https://api.rocotime.com/api/Skilllist/',
+	item: 'https://api.rocotime.com/api/Itemlist/',
+}
+const getListPageAttempt = (type: 'angel' | 'skill' | 'item') => {
+	return async () =>
+		await attemptGenerateRequest(
+			urlList[type],
+			{
+				attempt(params) {
+					return {
+						...params,
+						page: params.page + 1,
+					}
+				},
+				confirm: (data) => !data.length,
+				onProgress: (load) => {
+					console.log(`Loaded ${load} pages.`)
+				},
+			},
+			{
+				search: '',
+				id: '',
+				feature: '',
+				page: 1,
+			}
+		)
 }
 
-const getTestData = async () => {
-	const urlLength = Math.floor(Math.random() * 10) + 1
-	const urls = getRandomTodoItems(urlLength)
+const cacheList = async (type: 'angel' | 'skill' | 'item') => {
+	const listPages = await getListPageAttempt(type)()
 
-	const res = await concurrencyRequest<TodoData>(urls, {
-		concurrent: 12,
-		onProgress: (load, total) => {
-			console.log(`${Math.floor(((load + 1) / total) * 100)}%`)
+	switch (type) {
+		case 'angel':
+			await $db.value.deleteAngel()
+			console.log('[Debug Database] Reset angels db')
+			await $db.value.addAngel(listPages as any)
+			break
+		case 'skill':
+			await $db.value.deleteSkill()
+			console.log('[Debug Database] Reset skills db')
+			await $db.value.addSkill(listPages as any)
+			break
+		case 'item':
+			await $db.value.deleteItem()
+			console.log('[Debug Database] Reset items db')
+			await $db.value.addItem(listPages as any)
+			break
+	}
+}
+
+const isAngelListCached = useStorageAsync<boolean>(
+	'rocox-cached-list-angel',
+	false,
+	undefined,
+	{
+		serializer: {
+			read: async () => (await $db.value.sizes.angels()) !== 0,
+			write: StorageSerializers.boolean.write,
 		},
-	})
-
-	testFetchData.value = res as unknown[]
-	return res as TodoData[]
-}
-
-const testDataBase = async () => {
-	const data = await getTestData()
-	$db.value.addTodo(data)
-
-	console.log(await $db.value.getTodos())
-}
-
-const clearTodos = async () =>
-	$db.value.deleteTodo((await $db.value.getTodos()).map((item) => item.id))
-
-const getTestDatabase = async () => {
-	const data = await $db.value.getTodos()
-	console.log(data)
-}
-const getUncompletedTodo = async () => {
-	const data = await $db.value.getUncompletedTodos()
-	console.log(data)
-}
-
-const getAllAngelAttempt = async () => {
-	const data = await attemptGenerateRequest<
-		AngelListItemObject,
-		AngelListParma
-	>(
-		'https://api.rocotime.com/api/spiritList/',
-		{
-			attempt(params: AngelListParma) {
-				return {
-					...params,
-					page: params.page + 1,
-				}
-			},
-			confirm: (data) => !data.length,
-			onProgress: (load) => {
-				console.log(`Loaded ${load} pages.`)
-			},
+	}
+)
+const isSkillListCached = useStorageAsync<boolean>(
+	'rocox-cached-list-skill',
+	false,
+	undefined,
+	{
+		serializer: {
+			read: async () => (await $db.value.sizes.skills()) !== 0,
+			write: StorageSerializers.boolean.write,
 		},
-		{
-			search: '',
-			id: '',
-			feature: '',
-			page: 1,
-		}
-	)
-	console.log(data)
-}
-
-const getAllSkillAttempt = async () => {
-	const data = await attemptGenerateRequest<
-		AngelListItemObject,
-		AngelListParma
-	>(
-		'https://api.rocotime.com/api/Skilllist/',
-		{
-			attempt(params: AngelListParma) {
-				return {
-					...params,
-					page: params.page + 1,
-				}
-			},
-			confirm: (data) => !data.length,
-			onProgress: (load) => {
-				console.log(`Loaded ${load} pages.`)
-			},
+	}
+)
+const isItemListCached = useStorageAsync<boolean>(
+	'rocox-cached-list-item',
+	false,
+	undefined,
+	{
+		serializer: {
+			read: async () => (await $db.value.sizes.items()) !== 0,
+			write: StorageSerializers.boolean.write,
 		},
-		{
-			search: '',
-			id: '',
-			feature: '',
-			page: 1,
-		}
-	)
-	console.log(data)
-}
-
-const getAllItemAttempt = async () => {
-	const data = await attemptGenerateRequest<
-		AngelListItemObject,
-		AngelListParma
-	>(
-		'https://api.rocotime.com/api/Itemlist/',
-		{
-			attempt(params: AngelListParma) {
-				return {
-					...params,
-					page: params.page + 1,
-				}
-			},
-			confirm: (data) => !data.length,
-			onProgress: (load) => {
-				console.log(`Loaded ${load} pages.`)
-			},
-		},
-		{
-			search: '',
-			id: '',
-			feature: '',
-			page: 1,
-		}
-	)
-	console.log(data)
-}
+	}
+)
 </script>
 
 <template>
@@ -164,45 +118,22 @@ const getAllItemAttempt = async () => {
 						</template>
 						<template #content>
 							<div class="pop-content">
-								{{ JSON.stringify(testFetchData, null, 2) }}
+								Angel: {{ isAngelListCached ? '已缓存' : '未缓存' }}
+								<br />
+								Skill: {{ isSkillListCached ? '已缓存' : '未缓存' }}
+								<br />
+								Item: {{ isItemListCached ? '已缓存' : '未缓存' }}
 							</div>
 						</template>
 					</Popover>
 				</div>
 
 				<div class="test-btns">
-					<button type="button" class="btn" title="test" @click="getTestData">
-						获取数据
-					</button>
-					<button type="button" class="btn" title="test" @click="testDataBase">
-						使用测试数据测试DB
-					</button>
-					<button type="button" class="btn" title="test">添加Case</button>
-					<button type="button" class="btn" title="test">更新Case</button>
-					<button type="button" class="btn" title="test" @click="clearTodos">
-						清空Case
-					</button>
 					<button
 						type="button"
 						class="btn"
 						title="test"
-						@click="getTestDatabase"
-					>
-						获取Case
-					</button>
-					<button
-						type="button"
-						class="btn"
-						title="test"
-						@click="getUncompletedTodo"
-					>
-						获取未完成Case
-					</button>
-					<button
-						type="button"
-						class="btn"
-						title="test"
-						@click="getAllAngelAttempt"
+						@click="cacheList('angel')"
 					>
 						获取所有 Angel
 					</button>
@@ -210,7 +141,7 @@ const getAllItemAttempt = async () => {
 						type="button"
 						class="btn"
 						title="test"
-						@click="getAllSkillAttempt"
+						@click="cacheList('skill')"
 					>
 						获取所有 Skill
 					</button>
@@ -218,7 +149,7 @@ const getAllItemAttempt = async () => {
 						type="button"
 						class="btn"
 						title="test"
-						@click="getAllItemAttempt"
+						@click="cacheList('item')"
 					>
 						获取所有 Item
 					</button>

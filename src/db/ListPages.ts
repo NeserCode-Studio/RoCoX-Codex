@@ -47,7 +47,8 @@ export class ListPagesDatabase {
 		return await this.db.angels.offset(offset).limit(limit).sortBy('id')
 	}
 
-	async deleteAngel(id: number | number[]) {
+	async deleteAngel(id?: number | number[]) {
+		if (id === undefined) return await this.db.angels.clear()
 		if (Array.isArray(id))
 			return await this.db.angels.bulkDelete(id.map((i) => i.toString()))
 		return await this.db.angels.delete(id.toString())
@@ -67,7 +68,8 @@ export class ListPagesDatabase {
 		return await this.db.skills.offset(offset).limit(limit).sortBy('id')
 	}
 
-	async deleteSkill(id: number | number[]) {
+	async deleteSkill(id?: number | number[]) {
+		if (id === undefined) return await this.db.skills.clear()
 		if (Array.isArray(id))
 			return await this.db.skills.bulkDelete(id.map((i) => i.toString()))
 		return await this.db.skills.delete(id.toString())
@@ -87,7 +89,8 @@ export class ListPagesDatabase {
 		return await this.db.items.offset(offset).limit(limit).sortBy('id')
 	}
 
-	async deleteItem(id: number | number[]) {
+	async deleteItem(id?: number | number[]) {
+		if (id === undefined) return await this.db.items.clear()
 		if (Array.isArray(id))
 			return await this.db.items.bulkDelete(id.map((i) => i.toString()))
 		return await this.db.items.delete(id.toString())
