@@ -203,3 +203,8 @@ export interface AttemptGenerateRequestOption<T, K> {
 	confirm: (data: T[]) => boolean
 	onProgress?: (loaded: number) => void
 }
+
+export interface DatabasePageParma {
+	limit: number
+	offset: number
+}

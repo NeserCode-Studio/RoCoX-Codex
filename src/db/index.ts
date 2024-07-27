@@ -1,1 +1,1 @@
-export * from './SimpleAngel'
+export * from './ListPages'

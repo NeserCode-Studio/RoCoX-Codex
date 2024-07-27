@@ -10,9 +10,11 @@ import {
 const $props = withDefaults(
 	defineProps<{
 		close: () => void
+		modelEnabled?: boolean
 	}>(),
 	{
 		close: () => {},
+		modelEnabled: true,
 	}
 )
 const isOpen = defineModel<boolean>('isOpen', {
@@ -27,7 +29,11 @@ const closeModal = () => {
 
 <template>
 	<TransitionRoot appear :show="isOpen" as="template">
-		<Dialog as="div" @close="closeModal" class="relative z-10">
+		<Dialog
+			as="div"
+			@close="modelEnabled ? closeModal : null"
+			class="relative z-10"
+		>
 			<TransitionChild
 				as="template"
 				enter="duration-300 ease-out"

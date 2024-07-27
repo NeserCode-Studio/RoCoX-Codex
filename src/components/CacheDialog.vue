@@ -77,7 +77,63 @@ const getAllAngelAttempt = async () => {
 			},
 			confirm: (data) => !data.length,
 			onProgress: (load) => {
-				console.log(`Loaded ${load} items.`)
+				console.log(`Loaded ${load} pages.`)
+			},
+		},
+		{
+			search: '',
+			id: '',
+			feature: '',
+			page: 1,
+		}
+	)
+	console.log(data)
+}
+
+const getAllSkillAttempt = async () => {
+	const data = await attemptGenerateRequest<
+		AngelListItemObject,
+		AngelListParma
+	>(
+		'https://api.rocotime.com/api/Skilllist/',
+		{
+			attempt(params: AngelListParma) {
+				return {
+					...params,
+					page: params.page + 1,
+				}
+			},
+			confirm: (data) => !data.length,
+			onProgress: (load) => {
+				console.log(`Loaded ${load} pages.`)
+			},
+		},
+		{
+			search: '',
+			id: '',
+			feature: '',
+			page: 1,
+		}
+	)
+	console.log(data)
+}
+
+const getAllItemAttempt = async () => {
+	const data = await attemptGenerateRequest<
+		AngelListItemObject,
+		AngelListParma
+	>(
+		'https://api.rocotime.com/api/Itemlist/',
+		{
+			attempt(params: AngelListParma) {
+				return {
+					...params,
+					page: params.page + 1,
+				}
+			},
+			confirm: (data) => !data.length,
+			onProgress: (load) => {
+				console.log(`Loaded ${load} pages.`)
 			},
 		},
 		{
@@ -92,7 +148,12 @@ const getAllAngelAttempt = async () => {
 </script>
 
 <template>
-	<Dialog v-model:is-open="isOpen" :close="closeModel" class="dialog">
+	<Dialog
+		v-model:is-open="isOpen"
+		:close="closeModel"
+		:model-enabled="false"
+		class="dialog"
+	>
 		<template #title>缓存管理</template>
 		<template #details>
 			<div class="cache-details">
@@ -143,7 +204,23 @@ const getAllAngelAttempt = async () => {
 						title="test"
 						@click="getAllAngelAttempt"
 					>
-						获取所有Angel
+						获取所有 Angel
+					</button>
+					<button
+						type="button"
+						class="btn"
+						title="test"
+						@click="getAllSkillAttempt"
+					>
+						获取所有 Skill
+					</button>
+					<button
+						type="button"
+						class="btn"
+						title="test"
+						@click="getAllItemAttempt"
+					>
+						获取所有 Item
 					</button>
 				</div>
 			</div>

@@ -148,7 +148,7 @@ export const attemptGenerateRequest = <T, K extends Record<never, never>>(
 
 		const req = async (reqParams: K) =>
 			await (
-				await $fetch<{ data: [T] }>(url, {
+				await $fetch<{ data: T[] }>(url, {
 					method: 'POST',
 					body: Body.json({ ...reqParams }),
 					responseType: ResponseType.JSON,
@@ -159,10 +159,9 @@ export const attemptGenerateRequest = <T, K extends Record<never, never>>(
 			params = attempt(params)
 			const data = await req(params)
 
-			console.log(confirm(data), data)
 			if (!confirm(data)) {
 				tempData = data
-				results.push(data[0])
+				results.push(...data)
 				onProgress(++counter)
 			} else {
 				tempData = 'DONE'
